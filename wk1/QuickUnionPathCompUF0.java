@@ -26,4 +26,16 @@ public class QuickUnionPathCompUF0
 		int j = root(q);
 		id[i] = j;
 	}
+	
+	public static void main(String[] args)
+	{
+		int[] a = {1,2,3,4,5,6,7};
+		QuickUnionPathCompUF0 qf1 = new QuickUnionPathCompUF0(a.length);
+		qf1.union(0, 2);
+		qf1.union(0, 4);
+		qf1.union(5, 6);
+		System.out.println(qf1.connected(0, 6));
+		qf1.union(2, 5);
+		System.out.println(qf1.connected(0, 6));
+	}
 }
