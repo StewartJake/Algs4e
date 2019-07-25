@@ -19,8 +19,9 @@ public class Percolation
 			for (int j = 0; j < n; j++)
 			{
 				opens[i][j] = false;
-				grid[i][j] = counter++;
-				if (i == 0)	uf.union(grid[i][j], 0);
+				//sets all the top row to a virtual topper root
+				if (i == 0)	uf.union(0, counter);
+				counter++;
 			}
 		}
 	}
@@ -41,6 +42,9 @@ public class Percolation
 	{
 		valid(--row, --col);	//double duty | validate and decrement
 		opens[row][col] = true;
+		int currentId = indToId(row, col, true);
+		if (row == 0) uf.union(0, currentId) // this connects to a virtual topper
+		int otherId;
 		int dn_row = 1;
 		int up_row = 1;
 		int rt_col = 1;
@@ -50,14 +54,27 @@ public class Percolation
 		if (col == 0) lt_col=0;
 		if (col == size-1) rt_col=0;
 			
-		uf.union(grid[row + dn_row][col], grid[row][col]);
-		opens[row + dn_row][col] = true;
-		uf.union(grid[row - up_row][col], grid[row][col]);
-		opens[row - up_row][col] = true;
-		uf.union(grid[row][col + rt_col], grid[row][col]);
-		opens[row][col + rt_col] = true;
-		uf.union(grid[row][col - lt_col], grid[row][col]);
-		opens[row][col - lt_col] = true;
+		if (isOpen((row + dn_row),col))
+		{
+			otherId = indToId((row + dn_row),col, true);
+			uf.union(otherId, currentId);
+		}
+		if (isOpen((row - up_row),col))
+		{
+			otherId = indToId((row - up_row),col, true);
+			uf.union(otherId, currentId);
+		}
+		if (isOpen(row, (col + rt_col)))
+		{	
+			otherId = indToId(row,(col + rt_col), true);
+			uf.union(otherId, currentId);
+		}
+		if (isOpen(row,(col - lt_col)))
+		{
+			otherId = indToId(row,(col - lt_col), true);
+			uf.union(otherId, currentId);
+		}
+	
 	}
 
 	public boolean isOpen(int row, int col)
@@ -69,16 +86,37 @@ public class Percolation
 	public boolean isFull(int row, int col)
 	{
 		valid(--row, --col);
-		return uf.connected(0, grid[row][col]);
+		return (uf.connected(0, indToId(row, col, true));
 	}
-
+	
+	public int numberOfOpenSites()
+	{
+		int counter = 0;
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++)
+				if (opens[i][j] == true) counter++;
+		return counter;
+	}
+	
+	private int indToId(int row, int col, boolean isReduced)
+	{
+		row = (isReduced) ? row : row--;
+		col = (isReduced) ? col : col--;
+		return row*size + col;
+	}
 	public static void main(String[] args)
 	{
 		Percolation test = new Percolation(5);
-		test.open(1,5);
-		System.out.println(test.isFull(1,5));
-		System.out.println(test.isOpen(3,5));
-		test.open(3,5);
-		System.out.println(test.isOpen(3,5));
+		System.out.println(test.uf.connected(1,5));
+		test.uf.union(1,5);
+		//int counter = 0;
+		//for (int i = 0; i < test.size; i++)
+		//	for (int j = 0; j < test.size; j++)
+		//	{
+		//		System.out.println(counter + "    " +test.uf.find(counter));
+		//		counter++;
+		//	}
+		System.out.println(test.uf.connected(1,5));
+		System.out.println(test.uf.connected(1,2));
 	}
 }
