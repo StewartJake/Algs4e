@@ -20,18 +20,26 @@ public class Percolation
 			{
 				opens[i][j] = false;
 				grid[i][j] = counter++;
+				if (i == 0)	uf.union(grid[i][j], 0);
 			}
 		}
 	}
-
-	public void open(int row, int col)
+	
+	private void valid(int row, int col)
 	{
-		row--;		// convert from 1,1 notation
-		col--;		// to 0 based
+		// note private; will already receive a zero indexed
+		// row and col
+		//if ((row == topper || row == footer) || col == topper || col == footer) return;
 		if ((row > size || row < 0) || (col > size || col < 0))
 		{
 			throw new IllegalArgumentException("index is not between 1 and " + size);
 		}
+
+	}
+	
+	public void open(int row, int col)
+	{
+		valid(--row, --col);	//double duty | validate and decrement
 		opens[row][col] = true;
 		int dn_row = 1;
 		int up_row = 1;
@@ -54,20 +62,23 @@ public class Percolation
 
 	public boolean isOpen(int row, int col)
 	{
-		row--;		// convert from 1,1 notation
-		col--;		// to 0 based
-		if ((row > size || row < 0) || (col > size || col < 0))
-		{
-			throw new IllegalArgumentException("index is not between 1 and " + size);
-		}
+		valid(--row, --col);
 		return opens[row][col];
 	}
+
+	public boolean isFull(int row, int col)
+	{
+		valid(--row, --col);
+		return uf.connected(0, grid[row][col]);
+	}
+
 	public static void main(String[] args)
 	{
 		Percolation test = new Percolation(5);
 		test.open(1,5);
-		System.out.println(test.isOpen(3,4));
-		System.out.println(test.isOpen(1,5));
-	
+		System.out.println(test.isFull(1,5));
+		System.out.println(test.isOpen(3,5));
+		test.open(3,5);
+		System.out.println(test.isOpen(3,5));
 	}
 }
