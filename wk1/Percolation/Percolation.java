@@ -43,6 +43,8 @@ public class Percolation
 		int otherId;
 		if (row == 1) 
 			uf.union(0, currentId); // this connects to a virtual topper
+		else if (row == size)
+			uf.union(size + 1, currentId); // virtual footer
 		if (row != size  && isOpen((row + 1),col))
 		{
 			otherId = indToId((row + 1),col);
@@ -91,13 +93,18 @@ public class Percolation
 	{
 		return --row*size + --col;
 	}
+
+	public boolean percolates()
+	{
+		return uf.connected(0,6);
+	}
+
 	public static void main(String[] args)
 	{
 		Percolation test = new Percolation(5);
-		System.out.println(test.uf.connected(1,5));
 		test.open(1,5);
 		test.open(2,5);
-		test.open(4,5);
+		test.open(5,5);
 		//int counter = 0;
 		//for (int i = 0; i < test.size; i++)
 		//	for (int j = 0; j < test.size; j++)
@@ -105,7 +112,9 @@ public class Percolation
 		//		System.out.println(counter + "    " +test.uf.find(counter));
 		//		counter++;
 		//	}
-		System.out.println(test.isFull(2,5));
-		System.out.println(test.isFull(4,5));
+		System.out.println(test.percolates());
+		test.open(3,5);
+		test.open(4,5);
+		System.out.println(test.percolates());
 	}
 }
