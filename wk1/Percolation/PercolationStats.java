@@ -11,6 +11,8 @@ public class PercolationStats
 
 	public PercolationStats(int n, int trials)
 	{
+		if (n <= 0 || trials <= 0)
+			throw new IllegalArgumentException("Both arguments must be greater than zero");
 		listOfAverages = new double [trials];
 		numTrials = trials;
 		for (int i = 0; i < trials; i++)
@@ -48,9 +50,16 @@ public class PercolationStats
 
 	public static void main(String[] args)
 	{
+		int n = Integer.parseInt(args[0]);
+		int trials = Integer.parseInt(args[1]);
 		PercolationStats testStats;
-		testStats = new PercolationStats(50, 1000);
-		System.out.println(testStats.confidenceLo());
-		System.out.println(testStats.confidenceHi());
+		testStats = new PercolationStats(n, trials);
+		System.out.printf("%-24s","mean");
+		System.out.print("= " + testStats.mean() + "\n");
+		System.out.printf("%-24s","stddev");
+		System.out.print("= " + testStats.stddev() + "\n");
+		System.out.printf("%-24s","95% confidence interval");
+		System.out.print("= [" + testStats.confidenceLo() 
+				+", " + testStats.confidenceHi() + "]\n");
 	}
 }
