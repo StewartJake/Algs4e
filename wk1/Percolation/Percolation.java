@@ -3,15 +3,13 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation
 {
 	private boolean[][] opens;
-	private int[][] grid;
 	private WeightedQuickUnionUF uf;
 	private int size;
 	
 	public Percolation(int n)
 	{
 		uf = new WeightedQuickUnionUF(n*n);
-		opens = new boolean [n][n];
-		grid = new int [n][n];
+		opens = new boolean[n][n];
 		size = n;
 		int counter = 0;
 		for (int i = 0; i < n; i++)

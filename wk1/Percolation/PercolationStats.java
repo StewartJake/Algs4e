@@ -8,7 +8,7 @@ public class PercolationStats
 
 	public PercolationStats(int n, int trials)
 	{
-		double sumOfAverages = 0;
+		double sumOfAverages = 0.0;
 		for (int i = 0; i < trials; i++)
 		{
 			testSite = new Percolation(n);
@@ -18,7 +18,7 @@ public class PercolationStats
 				int rand_col = StdRandom.uniform(n) + 1;
 				testSite.open(rand_row, rand_col);
 			}
-			sumOfAverages += (testSite.numberOfOpenSites() / (n*n));
+			sumOfAverages += (double)(testSite.numberOfOpenSites() / (double)(n*n));
 		}
 		average = sumOfAverages/trials;
 
