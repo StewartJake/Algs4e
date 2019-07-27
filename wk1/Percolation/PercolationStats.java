@@ -1,16 +1,17 @@
-import java.lang.Math;
 import edu.princeton.cs.algs4.StdRandom;
 import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats
 {
-	private double average;
-	private Percolation testSite;
-	private double[] listOfAverages;
-	private int numTrials;
+	private static final double Z_SCORE_95 = 1.96;
+	private final int numTrials;
+	private final double avg;
+	private final double stdDev;
 
 	public PercolationStats(int n, int trials)
 	{
+		double[] listOfAverages;
+		Percolation testSite;
 		if (n <= 0 || trials <= 0)
 			throw new IllegalArgumentException("Both arguments must be greater than zero");
 		listOfAverages = new double [trials];
@@ -20,32 +21,34 @@ public class PercolationStats
 			testSite = new Percolation(n);
 			while (!testSite.percolates())
 			{
-				int rand_row = StdRandom.uniform(n) + 1;
-				int rand_col = StdRandom.uniform(n) + 1;
-				testSite.open(rand_row, rand_col);
+				int randRow = StdRandom.uniform(n) + 1;
+				int randCol = StdRandom.uniform(n) + 1;
+				testSite.open(randRow, randCol);
 			}
-			listOfAverages[i] = (double)(testSite.numberOfOpenSites() / (double)(n*n));
+			listOfAverages[i] = (double) (testSite.numberOfOpenSites()) / (n*n);
 		}
+		avg = StdStats.mean(listOfAverages, 0, trials);
+		stdDev = StdStats.stddev(listOfAverages);
 	}
 
 	public double mean()
 	{
-		return StdStats.mean(listOfAverages, 0, numTrials);
+		return avg;
 	}
 
 	public double stddev()
 	{
-		return StdStats.stddev(listOfAverages);
+		return stdDev;
 	}
 
 	public double confidenceLo()
 	{
-		return mean() - 1.96 * stddev() / Math.sqrt(numTrials);
+		return avg - Z_SCORE_95 * stdDev / Math.sqrt(numTrials);
 	}
 
 	public double confidenceHi()
 	{
-		return mean() + 1.96 * stddev() / Math.sqrt(numTrials);
+		return avg + Z_SCORE_95 * stdDev / Math.sqrt(numTrials);
 	}
 
 	public static void main(String[] args)
@@ -54,11 +57,11 @@ public class PercolationStats
 		int trials = Integer.parseInt(args[1]);
 		PercolationStats testStats;
 		testStats = new PercolationStats(n, trials);
-		System.out.printf("%-24s","mean");
+		System.out.printf("%-24s", "mean");
 		System.out.print("= " + testStats.mean() + "\n");
-		System.out.printf("%-24s","stddev");
+		System.out.printf("%-24s", "stddev");
 		System.out.print("= " + testStats.stddev() + "\n");
-		System.out.printf("%-24s","95% confidence interval");
+		System.out.printf("%-24s", "95% confidence interval");
 		System.out.print("= [" + testStats.confidenceLo() 
 				+", " + testStats.confidenceHi() + "]\n");
 	}
