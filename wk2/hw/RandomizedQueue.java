@@ -34,6 +34,9 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
 	public void enqueue(Item item)
 	{
+		if (item == null)
+			throw new IllegalArgumentException(
+					"Cannot add null");
 		if (tail == size) resize(size*2);
 		else a[head++] = item;
 		size++;
@@ -41,6 +44,9 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 	
 	private Item randomEntry(boolean remove)
 	{
+		if (isEmpty())
+			throw new NoSuchElementException(
+					"This queue is empty.");
 		int n = StdRandom.uniform(size);
 		Item item = a[n];
 		if (remove)
@@ -66,10 +72,13 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		public RandomIterator() {}
 		
 		public boolean hasNext()
-		{	return count == size;	}
+		{	return count != size;	}
 
 		public Item next()
 		{
+			if (!hasNext())
+				throw new NoSuchElementException(
+						"There is no next entry.");
 			Item entry = null;
 			while (hasNext() && entry != null)
 			{
