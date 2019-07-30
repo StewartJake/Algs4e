@@ -71,7 +71,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		public RandomIterator() {}
 		
 		public boolean hasNext()
-		{	return visited == tail;	}
+		{	return visited != tail;	}
 
 		public Item next()
 		{
@@ -104,10 +104,11 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		StdOut.println("1:              " + rq.size());
 		for (int i= 0; i < 20; i++)
 			rq.enqueue("test" + i);
+		StdOut.println("Dequeue");
 		StdOut.println("21:             " + rq.size());
-		String randEntry = rq.dequeue();
+		StdOut.println(rq.dequeue());
 		StdOut.println("20:             " + rq.size());
-		StdOut.println(randEntry);
+		StdOut.println("Sample");
 		StdOut.println("20:             " + rq.size());
 		StdOut.println(rq.sample());
 		StdOut.println("20:             " + rq.size());
