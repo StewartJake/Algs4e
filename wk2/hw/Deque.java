@@ -3,13 +3,12 @@ import java.util.NoSuchElementException;
 import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
-public class Dequeue<Item> implements Iterable<Item>
+public class Deque<Item> implements Iterable<Item>
 {
 	private Node first, last;
 	private int count = 0;
 
-	public Dequeue(){}
-
+	public Deque(){}
 
 	private class Node
 	{
@@ -17,16 +16,13 @@ public class Dequeue<Item> implements Iterable<Item>
 		Node next;
 	}
 
-
 	public boolean isEmpty()
 	{
 		return (last == null && first == null);
 	}
 
-
 	public int size()
 	{	return count;	}
-
 	
 	private void checkFirst()
 	{
@@ -36,7 +32,6 @@ public class Dequeue<Item> implements Iterable<Item>
 			last = first;
 		}
 	}
-
 
 	public void addFirst(Item item)
 	{
@@ -54,7 +49,6 @@ public class Dequeue<Item> implements Iterable<Item>
 		}
 		count++;
 	}
-
 
 	public void addLast(Item item)
 	{
@@ -74,7 +68,6 @@ public class Dequeue<Item> implements Iterable<Item>
 		count++;
 	}
 
-
 	public Item removeFirst()
 	{
 		if (isEmpty())
@@ -84,7 +77,6 @@ public class Dequeue<Item> implements Iterable<Item>
 		count--;
 		return item;
 	}
-
 
 	public Item removeLast()
 	{
@@ -98,19 +90,18 @@ public class Dequeue<Item> implements Iterable<Item>
 		count--;
 		return item;
 	}
-
 	
 	public Iterator<Item> iterator() 
 	{
-		return new DequeueIterator();
+		return new DequeIterator();
 	}
 
 
-	private class DequeueIterator implements Iterator<Item>
+	private class DequeIterator implements Iterator<Item>
 	{
 		private Node iter;
 
-		public DequeueIterator() {	iter = first;	}
+		public DequeIterator() {	iter = first;	}
 
 		public boolean hasNext() {	return iter != null;	}
 		public Item next()
@@ -127,8 +118,8 @@ public class Dequeue<Item> implements Iterable<Item>
 	}
 	public static void main(String[] args)
 	{
-		Dequeue<String> dq = new Dequeue<String>();
-		Dequeue<String> dq2 = new Dequeue<String>();
+		Deque<String> dq = new Deque<String>();
+		Deque<String> dq2 = new Deque<String>();
 		StdOut.println("true: " + dq.isEmpty());
 		StdOut.println("0:    " + dq.size());
 		dq.addFirst("test");
