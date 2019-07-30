@@ -17,7 +17,8 @@ public class Deque<Item> implements Iterable<Item>
 
 	public boolean isEmpty()
 	{
-		return (last == null && first == null);
+		// return (last == null && first == null);
+        return (count == 0);
 	}
 
 	public int size()
@@ -38,7 +39,11 @@ public class Deque<Item> implements Iterable<Item>
 			throw new IllegalArgumentException("You cannot add a null");
 		checkFirst();
 		if (count == 0)
+        {
 			first.item = item;
+            first.next = null;
+            last = first;
+        }
 		else
 		{
 			Node oldFirst = first;
@@ -55,7 +60,11 @@ public class Deque<Item> implements Iterable<Item>
 			throw new IllegalArgumentException("You cannot add a null");
 		checkFirst();
 		if (count == 0)
+        {
 			last.item = item;
+            last.next = null;
+            first = last;
+        }
 		else
 		{
 			Node oldLast = last;
@@ -76,17 +85,18 @@ public class Deque<Item> implements Iterable<Item>
 		count--;
 		return item;
 	}
-
+    // getting null pointer exceptions in removeLast();
 	public Item removeLast()
 	{
 		if (isEmpty())
 			throw new NoSuchElementException("The dequeue is empty");
 		Item item = last.item;
-		Node x = first;
+		Node penultimate = first;
 		// check here is performance bug
-        while (x.next.next != null) {	x = x.next;	}
-		x.next = null;
-		last = x;
+        while (penultimate.next.next != null)
+        {	penultimate = penultimate.next;	}
+		penultimate.next = null;
+		last = penultimate;
 		count--;
 		return item;
 	}
@@ -108,7 +118,9 @@ public class Deque<Item> implements Iterable<Item>
 		{
 			Item item = iter.item;
 			if (hasNext())	iter = iter.next;
-			else		iter = first;
+			else
+                throw new NoSuchElementException(
+                        "There is no next.");
 			return item;
 		}
 		public void remove()
