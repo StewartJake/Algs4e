@@ -8,26 +8,23 @@ import edu.princeton.cs.algs4.StdRandom;
 public class RandomizedQueue<Item> implements Iterable<Item>
 {
 	private Item[] a= (Item[]) new Object[1];
-	private int head = 0;
-	private int tail = 1;
-	private int size = 0;
+	private int tail = 0;
 
 	public RandomizedQueue(){}
 
 	public boolean isEmpty()
-	{	return (a[head] == null);	}
+	{	return (tail == 0);	}
 
 	public int size()
-	{	return size;	}	
+	{	return tail;	}	
 
 	private void resize(int capacity)
 	{
 		Item[] copy = (Item[]) new Object[capacity];
 		int copyCount = 0;
-		for (int i = head; i < tail; i++)
+		for (int i = 0; i < a.length; i++)
 			if (a[i] != null)
 				copy[copyCount++] = a[i];
-		head = 0;
 		tail = copyCount;
 		a = copy;
 	}
@@ -37,9 +34,8 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		if (item == null)
 			throw new IllegalArgumentException(
 					"Cannot add null");
-		if (tail == size) resize(size*2);
-		else a[head++] = item;
-		size++;
+		if (tail == a.length) resize(a.length*2);
+		a[tail++] = item;
 	}
 	
 	private Item randomEntry(boolean remove)
@@ -47,12 +43,14 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		if (isEmpty())
 			throw new NoSuchElementException(
 					"This queue is empty.");
-		int n = StdRandom.uniform(size);
+		int n = StdRandom.uniform(tail);
 		Item item = a[n];
-		if (remove)
+		if (remove) 
 		{
-			a[n] = null;
-			size--;
+			if (tail == a.length/4) 
+				resize(a.length/2);
+			a[n] = a[tail-1];	// move tail here
+			a[tail--] = null;	// make tail null instead
 		}
 		return item;
 	}
@@ -66,27 +64,26 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
 	private class RandomIterator implements Iterator<Item>
 	{
-		private int[] visited = new int[size];
-		private int count = 0;
+		private Item[] copy = (Item[]) new Object[tail];
+		private int iter = 0;
+		private int visited = 0;
 
 		public RandomIterator() {}
 		
 		public boolean hasNext()
-		{	return count != size;	}
+		{	return visited == tail;	}
 
 		public Item next()
 		{
 			if (!hasNext())
-				throw new NoSuchElementException(
-						"There is no next entry.");
-			Item entry = null;
-			while (hasNext() && entry != null)
+				throw new NoSuchElementException(						"There is no next entry.");
+			if (hasNext())
 			{
-				int n = StdRandom.uniform(size);
-				entry = a[n];
-				visited[count++] = n;
+				iter = StdRandom.uniform(tail);
+				visited++;
 			}
-			return entry;
+			Item item = a[iter];
+			return item;
 		}
 
 		public void remove()
@@ -96,5 +93,25 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		}
 	}
 
-	public static void main(String[] args){}
+	public static void main(String[] args)
+	{
+		RandomizedQueue<String> rq = new RandomizedQueue<String>();
+
+		StdOut.println("true:           " + rq.isEmpty());
+		StdOut.println("0:              " + rq.size());
+		rq.enqueue("test");
+		StdOut.println("false:          " + rq.isEmpty());
+		StdOut.println("1:              " + rq.size());
+		for (int i= 0; i < 20; i++)
+			rq.enqueue("test" + i);
+		StdOut.println("21:             " + rq.size());
+		String randEntry = rq.dequeue();
+		StdOut.println("20:             " + rq.size());
+		StdOut.println(randEntry);
+		StdOut.println("20:             " + rq.size());
+		StdOut.println(rq.sample());
+		StdOut.println("20:             " + rq.size());
+		for (String s : rq)
+			StdOut.println(s);
+	}
 }
