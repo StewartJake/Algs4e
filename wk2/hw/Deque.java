@@ -1,6 +1,5 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 
 public class Deque<Item> implements Iterable<Item>
@@ -8,7 +7,7 @@ public class Deque<Item> implements Iterable<Item>
 	private Node first, last;
 	private int count = 0;
 
-	public Deque(){}
+	public Deque() { }
 
 	private class Node
 	{
@@ -84,7 +83,8 @@ public class Deque<Item> implements Iterable<Item>
 			throw new NoSuchElementException("The dequeue is empty");
 		Item item = last.item;
 		Node x = first;
-		while (x.next.next != null) {	x = x.next;	}
+		// check here is performance bug
+        while (x.next.next != null) {	x = x.next;	}
 		x.next = null;
 		last = x;
 		count--;

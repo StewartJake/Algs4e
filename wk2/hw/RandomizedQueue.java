@@ -1,16 +1,15 @@
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.StdRandom;
 
 
 public class RandomizedQueue<Item> implements Iterable<Item>
 {
-	private Item[] a= (Item[]) new Object[1];
+	private Item[] a = (Item[]) new Object[1];
 	private int tail = 0;
 
-	public RandomizedQueue(){}
+	public RandomizedQueue() { }
 
 	public boolean isEmpty()
 	{	return (tail == 0);	}
@@ -64,11 +63,10 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
 	private class RandomIterator implements Iterator<Item>
 	{
-		private Item[] copy = (Item[]) new Object[tail];
 		private int iter = 0;
 		private int visited = 0;
 
-		public RandomIterator() {}
+		public RandomIterator() { }
 		
 		public boolean hasNext()
 		{	return visited != tail;	}
@@ -76,7 +74,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		public Item next()
 		{
 			if (!hasNext())
-				throw new NoSuchElementException(						"There is no next entry.");
+				throw new NoSuchElementException("There is no next entry.");
 			if (hasNext())
 			{
 				iter = StdRandom.uniform(tail);
@@ -102,7 +100,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		rq.enqueue("test");
 		StdOut.println("false:          " + rq.isEmpty());
 		StdOut.println("1:              " + rq.size());
-		for (int i= 0; i < 20; i++)
+		for (int i = 0; i < 20; i++)
 			rq.enqueue("test" + i);
 		StdOut.println("Dequeue");
 		StdOut.println("21:             " + rq.size());
