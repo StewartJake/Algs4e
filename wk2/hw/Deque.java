@@ -83,7 +83,11 @@ public class Deque<Item> implements Iterable<Item>
             first.prev = null;
             oldFirst.next = null;
         }
-        else    first = null;
+        else
+        {
+            first = null;
+            last = null;
+        }
         count--;
 		return item;
 	}
@@ -100,7 +104,11 @@ public class Deque<Item> implements Iterable<Item>
             last.next = null;
             oldLast.prev = null;
         }
-        else    last = null;
+        else
+        {
+            last = null;
+            first = null;
+        }
 		count--;
 		return item;
 	}
@@ -115,18 +123,22 @@ public class Deque<Item> implements Iterable<Item>
 	{
 		private Node iter;
 
-		public DequeIterator() {	iter = first;	}
+		public DequeIterator() 
+        {	
+            if (first == null)  iter = last;
+            else                iter = first;	
+        }
 
 		public boolean hasNext() {	return iter.next != null;	}
 		public Item next()
 		{
+            if (!hasNext())    
+                throw new NoSuchElementException("There is no next.");
 			Item item = iter.item;
 			if (hasNext())	iter = iter.next;
-			else
-                throw new NoSuchElementException(
-                        "There is no next.");
 			return item;
 		}
+
 		public void remove()
 		{
 			throw new UnsupportedOperationException("The remove() method is not supported");
@@ -162,8 +174,8 @@ public class Deque<Item> implements Iterable<Item>
 		// for (String s : dq2)
 		// 	StdOut.println(s);
         Deque<Integer> deque = new Deque<Integer>();
-        deque.addFirst(1);
-        deque.removeFirst();
+        deque.addLast(1);
+        StdOut.println(deque.iterator());
 	}
 }
 
