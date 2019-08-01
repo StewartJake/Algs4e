@@ -32,7 +32,7 @@ public class Deque<Item> implements Iterable<Item>
 	{
 		if (item == null)
 			throw new IllegalArgumentException("You cannot add a null");
-		if (count == 0)
+		if (isEmpty())
         {
             first = new Node();
 			first.item = item;
@@ -53,7 +53,7 @@ public class Deque<Item> implements Iterable<Item>
 	{
 		if (item == null)
 			throw new IllegalArgumentException("You cannot add a null");
-		if (count == 0)
+		if (isEmpty())
         {
             last = new Node();
 			last.item = item;
@@ -129,7 +129,7 @@ public class Deque<Item> implements Iterable<Item>
             else                iter = first;	
         }
 
-		public boolean hasNext() {	return iter.next != null;	}
+		public boolean hasNext() {	return iter != null;	}
 		public Item next()
 		{
             if (!hasNext())    

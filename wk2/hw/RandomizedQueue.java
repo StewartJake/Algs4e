@@ -69,20 +69,25 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 	private class RandomIterator implements Iterator<Item>
 	{
 		private int iter;
+        private int[] order;
 
 		public RandomIterator() 
         {
             iter = 0;
+            order = new int[iter];
+            for (int i = 0; i < iter; i++)
+                order[i] = i;
+            StdRandom.shuffle(order);
         }
 		
 		public boolean hasNext()
-		{	return iter < tail;	}
+		{	return iter < order.length;	}
 
 		public Item next()
 		{
 			if (!hasNext())
 				throw new NoSuchElementException("There is no next entry.");
-            return a[iter++];
+            return a[order[iter++]];
 		}
 
 		public void remove()
