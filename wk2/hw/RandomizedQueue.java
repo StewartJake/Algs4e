@@ -12,7 +12,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 	public RandomizedQueue() { }
 
 	public boolean isEmpty()
-	{	return (tail == 0);	}
+	{	return tail  == 0;	}
 
 	public int size()
 	{	return tail;	}	
@@ -20,11 +20,8 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 	private void resize(int capacity)
 	{
 		Item[] copy = (Item[]) new Object[capacity];
-		int copyCount = 0;
-		for (int i = 0; i < a.length; i++)
-			if (a[i] != null)
-				copy[copyCount++] = a[i];
-		tail = copyCount;
+		for (int i = 0; i < tail; i++)
+			copy[i] = a[i];
 		a = copy;
 	}
 
@@ -34,7 +31,15 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 			throw new IllegalArgumentException(
 					"Cannot add null");
 		if (tail == a.length) resize(a.length*2);
-		a[tail++] = item;
+        int n;
+        if (tail == 0)  n = tail++;
+        else
+        {
+            n = StdRandom.uniform(tail);
+            Item itemToMove = a[n];
+		    a[tail++] = itemToMove;
+        }
+        a[n] = item;
 	}
 	
 	private Item randomEntry(boolean remove)
@@ -48,8 +53,8 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		{
 			if (tail == a.length/4) 
 				resize(a.length/2);
-			a[n] = a[tail-1];	// move tail here
-			a[tail--] = null;	// make tail null instead
+			a[n] = a[--tail];	// move tail here
+			a[tail] = null;	// make tail null instead
 		}
 		return item;
 	}
@@ -63,25 +68,21 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
 	private class RandomIterator implements Iterator<Item>
 	{
-		private int iter = 0;
-		private int visited = 0;
+		private int iter;
 
-		public RandomIterator() { }
+		public RandomIterator() 
+        {
+            iter = 0;
+        }
 		
 		public boolean hasNext()
-		{	return visited != tail;	}
+		{	return iter < tail;	}
 
 		public Item next()
 		{
 			if (!hasNext())
 				throw new NoSuchElementException("There is no next entry.");
-			if (hasNext())
-			{
-				iter = StdRandom.uniform(tail);
-				visited++;
-			}
-			Item item = a[iter];
-			return item;
+            return a[iter++];
 		}
 
 		public void remove()
@@ -93,8 +94,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 
 	public static void main(String[] args)
 	{
-		RandomizedQueue<String> rq = new RandomizedQueue<String>();
-
+        RandomizedQueue<String> rq = new RandomizedQueue<String>();
 		StdOut.println("true:           " + rq.isEmpty());
 		StdOut.println("0:              " + rq.size());
 		rq.enqueue("test");
@@ -112,5 +112,5 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		StdOut.println("20:             " + rq.size());
 		for (String s : rq)
 			StdOut.println(s);
-	}
+    }
 }
