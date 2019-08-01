@@ -74,14 +74,14 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		public RandomIterator() 
         {
             iter = 0;
-            order = new int[iter];
-            for (int i = 0; i < iter; i++)
+            order = new int[size()];
+            for (int i = 0; i < size(); i++)
                 order[i] = i;
             StdRandom.shuffle(order);
         }
 		
 		public boolean hasNext()
-		{	return iter < order.length;	}
+		{	return iter < size();	}
 
 		public Item next()
 		{
@@ -115,6 +115,7 @@ public class RandomizedQueue<Item> implements Iterable<Item>
 		StdOut.println("20:             " + rq.size());
 		StdOut.println(rq.sample());
 		StdOut.println("20:             " + rq.size());
+        StdOut.println(rq.iterator().hasNext());
 		for (String s : rq)
 			StdOut.println(s);
     }
