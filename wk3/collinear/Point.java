@@ -142,6 +142,13 @@ public class Point implements Comparable<Point> {
         assert b.slopeTo(d) == 0.0;
         assert b.slopeTo(c) == Double.NEGATIVE_INFINITY;
         assert b.slopeTo(f) == Double.POSITIVE_INFINITY;
+
+        Point p = new Point(394, 363);
+        Point q = new Point(48, 78);
+        Point r = new Point(23, 261);
+        // System.out.println(p.compare(q, r));
+        System.out.println(p.slopeTo(q));
+        System.out.println(p.slopeTo(r));
     }
 }
 
