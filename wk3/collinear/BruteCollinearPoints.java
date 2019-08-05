@@ -1,5 +1,5 @@
+import java.util.Arrays;
 import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdIn;
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.In;
 
@@ -26,7 +26,7 @@ public class BruteCollinearPoints
                             assert lineSegs[count - 1] != null;
                         }
         // This may cause a performace bug later
-        if (lineSegs[lineSegs.length - 1] == null)    resize(count);
+        // if (lineSegs[lineSegs.length - 1] == null)    resize(count);
     }
 
 
@@ -44,7 +44,13 @@ public class BruteCollinearPoints
 
 
     public LineSegment[] segments()
-    {   return lineSegs; }
+    {   
+        LineSegment[] copy = new LineSegment[count];
+        for (int i = 0; i < count; i ++)
+            copy[i] = lineSegs[i];
+        return copy;
+    }
+
     
     public static void main(String[] args) {
 
