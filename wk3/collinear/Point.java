@@ -7,7 +7,7 @@
  *  For use on Coursera, Algorithms Part I programming assignment.
  *
  ******************************************************************************/
-
+import java.util.Arrays;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
@@ -146,9 +146,13 @@ public class Point implements Comparable<Point> {
         Point p = new Point(394, 363);
         Point q = new Point(48, 78);
         Point r = new Point(23, 261);
-        // System.out.println(p.compare(q, r));
-        System.out.println(p.slopeTo(q));
-        System.out.println(p.slopeTo(r));
+        Point[] points = new Point[3];
+        points[0] = f;
+        points[1] = d;
+        points[2] = a;
+        Arrays.sort(points, f.slopeOrder());
+
+
     }
 }
 
