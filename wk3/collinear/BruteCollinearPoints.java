@@ -10,23 +10,27 @@ public class BruteCollinearPoints
 
     public BruteCollinearPoints(Point[] points)
     {
+        if (points == null)
+            throw new IllegalArgumentException ("The array is null.");
+        Arrays.sort(points);
+        for (int i = 0; i < points.length - 1; i++)
+            if (points[i] == null || points[i].compareTo(points[i + 1]) == 0)
+                throw new IllegalArgumentException("Illegal point in array");
+   
         lineSegs = new LineSegment[1];
         count = 0;
         int maxIter = points.length;
         
-        for (int p = 0; p < maxIter - 3; p++)
-            for (int q = p + 1; q < maxIter - 2; q++)
-                for (int r = q + 1; r < maxIter - 1; r++)
+        for (int p = 0; p < maxIter; p++)
+            for (int q = p + 1; q < maxIter; q++)
+                for (int r = q + 1; r < maxIter; r++)
                     for (int s = r + 1; s < maxIter; s++)
                         if (points[p].slopeTo(points[q]) == points[q].slopeTo(points[r])
                             && points[q].slopeTo(points[r]) == points[r].slopeTo(points[s]))
                         {
                             if (count == lineSegs.length)   resize(lineSegs.length*2);
-                            lineSegs[count++] = new LineSegment(points[p], points[s]);
-                            assert lineSegs[count - 1] != null;
+                                lineSegs[count++] = new LineSegment(points[p], points[s]);
                         }
-        // This may cause a performace bug later
-        // if (lineSegs[lineSegs.length - 1] == null)    resize(count);
     }
 
 
