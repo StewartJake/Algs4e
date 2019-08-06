@@ -7,36 +7,41 @@ public class FastCollinearPoints
 {
     private LineSegment[] lineSegs;
     private int count;
+    // private static final Comparator<Point> BY_SLOPE = new slopeOrder();
     
     public FastCollinearPoints(Point[] points)
     {
+        if (points == null)
+            throw new IllegalArgumentException ("The array is null.");
+        Arrays.sort(points);
+        for (int i = 0; i < points.length - 1; i++)
+            if (points[i] == null || points[i].compareTo(points[i + 1]) == 0)
+                throw new IllegalArgumentException("Illegal point in array");
         lineSegs = new LineSegment[1];
-        double[] slopes = new double[points.length];
+        double[] slopes = new double[points.length - 1];
         int maxIter = points.length;
         count = 0;
 
-        for (int p = 0; p < maxIter - 1; p++)
+        for (int p = 0; p < maxIter; p++)
         {
             for (int q = p + 1; q < maxIter; q++)
                 slopes[p] = points[p].slopeTo(points[q]);
-            if (p == maxIter - 1)
+            Arrays.sort(slopes);
+            Arrays.sort(points, points[p].slopeOrder());
+            int slopesCounter = 0;
+            double slope = slopes[0];
+            for (int r = 1; r < slopes.length; r++)
             {
-
-                Arrays.sort(slopes);
-                int slopesCounter = 0;
-                double slope = slopes[0];
-                for (int q = 1; q < slopes.length; q++)
+                if (slopes[r] == slope)
+                    slopesCounter++;
+                else
                 {
-                    if (slopes[q] == slope)
-                        slopesCounter++;
-                    else
+                    if (slopesCounter >= 3)
                     {
-                        if (slopesCounter >= 3)
-                        {
-                            if (lineSegs.length == count)   resize(count * 2);
-                            lineSegs[count++] = new LineSegment(points[p], points[p + slopesCounter]);
-                            slopesCounter = 0;
-                        }
+                        if (lineSegs.length == count)   resize(count * 2);
+                        lineSegs[count++] = new LineSegment(points[p], points[p + slopesCounter]);
+                        slopesCounter = 0;
+                        slope = slopes[r];
                     }
                 }
             }
@@ -89,6 +94,7 @@ public class FastCollinearPoints
 
     // print and draw the line segments
     FastCollinearPoints collinear = new FastCollinearPoints(points);
+    System.out.println(collinear.numberOfSegments());
     for (LineSegment segment : collinear.segments()) {
         StdOut.println(segment);
         segment.draw();
