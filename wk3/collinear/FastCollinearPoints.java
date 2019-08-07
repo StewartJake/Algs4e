@@ -30,39 +30,29 @@ public class FastCollinearPoints
         //double[] slopes = new double[points.length - 1];
         count = 0;
 
-        for (int p = 0; p < maxIter - 2; p++)
+        for (int p = 0; p < maxIter-1; p++)
         {
-            double[] slopes = new double[points.length - 1];
-            for (int q = p + 1; q < maxIter; q++)
-                slopes[p] = points[p].slopeTo(points[q]);
-            Arrays.sort(slopes);
             Arrays.sort(sortedPoints, sortedPoints[p].slopeOrder());
-            int slopesCounter = 0;
-            double slope = slopes[0];
-            for (int r = 0; r < slopes.length; r++)
+            int slopesCounter = 1;
+            double slope = sortedPoints[p].slopeTo(sortedPoints[p + 1]);
+            
+            for (int r = p + 2; r < maxIter; r++)
             {
-                if (slopes[r] == slope)
+                if (sortedPoints[p].slopeTo(sortedPoints[r]) == slope)
                     slopesCounter++;
                 else
                 {
                     if (slopesCounter >= 3)
                     {
                         if (lineSegs.length == count)   resize(count * 2);
-                        int endpoint = p + slopesCounter >= maxIter ?
-                                         maxIter - 1 : p + slopesCounter;
                         lineSegs[count++] = new LineSegment(
-                                        sortedPoints[p], sortedPoints[r]);
+                                        sortedPoints[p], sortedPoints[r - 1]);
                     }
-                    r = r + slopesCounter >= slopes.length ?
-                                 slopes.length - 1 : r + slopesCounter;
-                    slope = slopes[r];
-                    slopesCounter = 0;
+                    slope = sortedPoints[p].slopeTo(sortedPoints[r]);
+                    slopesCounter = 1;
                 }
             }
         }
-        // remove duplicates
-
-     //   resize(count);
     }
   
     
