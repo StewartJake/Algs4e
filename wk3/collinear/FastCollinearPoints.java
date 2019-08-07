@@ -8,26 +8,31 @@ public class FastCollinearPoints
     private LineSegment[] lineSegs;
     private Point[] sortedPoints;
     private int count;
-    // private static final Comparator<Point> BY_SLOPE = new slopeOrder();
-    
+   
+
     public FastCollinearPoints(Point[] points)
     {
         if (points == null)
             throw new IllegalArgumentException ("The array is null.");
-        Arrays.sort(points);
-        for (int i = 0; i < points.length - 1; i++)
-            if (points[i] == null || points[i].compareTo(points[i + 1]) == 0)
-                throw new IllegalArgumentException("Illegal point in array");
+
         int maxIter = points.length;
         lineSegs = new LineSegment[1];
         sortedPoints = new Point[maxIter];
-        for (int j = 0; j < maxIter; j++)
-            sortedPoints[j] = points[j];
-        double[] slopes = new double[points.length - 1];
+
+        for (int i = 0; i < maxIter; i++)
+            sortedPoints[i] = points[i];
+
+        for (int j = 0; j < maxIter - j; j++)
+            if (points[j] == null 
+                || sortedPoints[j].compareTo(sortedPoints[j + 1]) == 0)
+                throw new IllegalArgumentException("Illegal point in array");
+
+        //double[] slopes = new double[points.length - 1];
         count = 0;
 
-        for (int p = 0; p < maxIter; p++)
+        for (int p = 0; p < maxIter - 2; p++)
         {
+            double[] slopes = new double[points.length - 1];
             for (int q = p + 1; q < maxIter; q++)
                 slopes[p] = points[p].slopeTo(points[q]);
             Arrays.sort(slopes);
@@ -43,15 +48,20 @@ public class FastCollinearPoints
                     if (slopesCounter >= 3)
                     {
                         if (lineSegs.length == count)   resize(count * 2);
-                        int endpoint = p + slopesCounter >= maxIter ? maxIter - 1 : p + slopesCounter;
-                        lineSegs[count++] = new LineSegment(sortedPoints[p], sortedPoints[r + 1]);
+                        int endpoint = p + slopesCounter >= maxIter ?
+                                         maxIter - 1 : p + slopesCounter;
+                        lineSegs[count++] = new LineSegment(
+                                        sortedPoints[p], sortedPoints[r]);
                     }
-                    r = r + slopesCounter >= slopes.length ? slopes.length - 1 : r + slopesCounter;
+                    r = r + slopesCounter >= slopes.length ?
+                                 slopes.length - 1 : r + slopesCounter;
                     slope = slopes[r];
                     slopesCounter = 0;
                 }
             }
         }
+        // remove duplicates
+
      //   resize(count);
     }
   
