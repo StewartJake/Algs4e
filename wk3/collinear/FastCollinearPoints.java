@@ -30,26 +30,31 @@ public class FastCollinearPoints
         //double[] slopes = new double[points.length - 1];
         count = 0;
 
-        for (int p = 0; p < maxIter-1; p++)
+        for (int p = 0; p < maxIter - 2; p++)
         {
-            Arrays.sort(sortedPoints, sortedPoints[p].slopeOrder());
-            int slopesCounter = 1;
-            double slope = sortedPoints[p].slopeTo(sortedPoints[p + 1]);
-            
-            for (int r = p + 2; r < maxIter; r++)
+            Arrays.sort(sortedPoints, points[p].slopeOrder());
+            for (int q = 0; q < maxIter - 1; q++)
             {
-                if (sortedPoints[p].slopeTo(sortedPoints[r]) == slope)
-                    slopesCounter++;
-                else
+                int slopesCounter = 1;
+                double slope = sortedPoints[q].slopeTo(sortedPoints[q + 1]);
+                
+                for (int r = q + 2; r < maxIter; r++)
                 {
-                    if (slopesCounter >= 3)
+                    if (sortedPoints[q].slopeTo(sortedPoints[r]) == slope)
+                        slopesCounter++;
+                    else
                     {
-                        if (lineSegs.length == count)   resize(count * 2);
-                        lineSegs[count++] = new LineSegment(
-                                        sortedPoints[p], sortedPoints[r - 1]);
+                        if (slopesCounter >= 3)
+                        {
+                            if (lineSegs.length == count)   resize(count * 2);
+                            lineSegs[count++] = new LineSegment(
+                                         sortedPoints[q], sortedPoints[r - 1]);
+                        }
+                        q = r;
+                        if (r != maxIter - 1)
+                            slope = sortedPoints[q].slopeTo(sortedPoints[++r]);
+                        slopesCounter = 1;
                     }
-                    slope = sortedPoints[p].slopeTo(sortedPoints[r]);
-                    slopesCounter = 1;
                 }
             }
         }
