@@ -66,7 +66,7 @@ public class Point implements Comparable<Point> {
             return Double.POSITIVE_INFINITY;
         if (this.y - that.y == 0)
             return 0.0;
-        return (double) (that.y - this.y) / (that.x - this.x);
+        return ((double) (that.y - this.y)) / (that.x - this.x);
     }
 
     /**
@@ -142,17 +142,6 @@ public class Point implements Comparable<Point> {
         assert b.slopeTo(d) == 0.0;
         assert b.slopeTo(c) == Double.NEGATIVE_INFINITY;
         assert b.slopeTo(f) == Double.POSITIVE_INFINITY;
-
-        Point p = new Point(394, 363);
-        Point q = new Point(48, 78);
-        Point r = new Point(23, 261);
-        Point[] points = new Point[3];
-        points[0] = f;
-        points[1] = d;
-        points[2] = a;
-        Arrays.sort(points, f.slopeOrder());
-
-
     }
 }
 

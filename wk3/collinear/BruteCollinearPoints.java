@@ -10,26 +10,34 @@ public class BruteCollinearPoints
 
     public BruteCollinearPoints(Point[] points)
     {
-        if (points == null)
-            throw new IllegalArgumentException ("The array is null.");
-        Arrays.sort(points);
-        for (int i = 0; i < points.length - 1; i++)
-            if (points[i] == null || points[i].compareTo(points[i + 1]) == 0)
+        Point[] defPoints = points.clone();
+        if (defPoints == null)
+            throw new IllegalArgumentException("The array is null.");
+        for (int i = 0; i < points.length; i++)
+        {
+            if (points[i] == null)
+                throw new IllegalArgumentException("Null point in array.");
+            else
+                defPoints[i] = points[i];
+        }
+        Arrays.sort(defPoints);
+        for (int i = 0; i < defPoints.length - 1; i++)
+            if (defPoints[i].compareTo(defPoints[i + 1]) == 0)
                 throw new IllegalArgumentException("Illegal point in array");
    
         lineSegs = new LineSegment[1];
         count = 0;
-        int maxIter = points.length;
+        int maxIter = defPoints.length;
         
         for (int p = 0; p < maxIter; p++)
             for (int q = p + 1; q < maxIter; q++)
                 for (int r = q + 1; r < maxIter; r++)
                     for (int s = r + 1; s < maxIter; s++)
-                        if (points[p].slopeTo(points[q]) == points[q].slopeTo(points[r])
-                            && points[q].slopeTo(points[r]) == points[r].slopeTo(points[s]))
+                        if (defPoints[p].slopeTo(defPoints[q]) == defPoints[q].slopeTo(defPoints[r])
+                            && defPoints[q].slopeTo(defPoints[r]) == defPoints[r].slopeTo(defPoints[s]))
                         {
                             if (count == lineSegs.length)   resize(lineSegs.length*2);
-                                lineSegs[count++] = new LineSegment(points[p], points[s]);
+                                lineSegs[count++] = new LineSegment(defPoints[p], defPoints[s]);
                         }
     }
 
@@ -50,7 +58,7 @@ public class BruteCollinearPoints
     public LineSegment[] segments()
     {   
         LineSegment[] copy = new LineSegment[count];
-        for (int i = 0; i < count; i ++)
+        for (int i = 0; i < count; i++)
             copy[i] = lineSegs[i];
         return copy;
     }

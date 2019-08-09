@@ -7,55 +7,71 @@ public class FastCollinearPoints
 {
     private LineSegment[] lineSegs;
     private Point[] sortedPoints;
-    private Point[] startPoints;
-    private int startPtCounter;
+    private double[] usedSlopes;
+    private int mCounter;
     private int count;
    
 
     public FastCollinearPoints(Point[] points)
     {
         if (points == null)
-            throw new IllegalArgumentException ("The array is null.");
+            throw new IllegalArgumentException("The array is null.");
         
-        int maxIter = points.length;
+        Point[] defPoints = new Point[points.length];
+        for (int i = 0; i < points.length; i++)
+        {
+            if (points[i] == null)
+                throw new IllegalArgumentException("Null point in array");
+            else
+                defPoints[i] = points[i];
+        }
+        int maxIter = defPoints.length;
         lineSegs = new LineSegment[1];
-        startPoints = new Point[1];
+        usedSlopes = new double[1];
         sortedPoints = new Point[maxIter];
-        Arrays.sort(points);
-        for (Point pt : points)
-           System.out.println(pt); 
+        Arrays.sort(defPoints);
         for (int i = 0; i < maxIter; i++)
-            sortedPoints[i] = points[i];
+            sortedPoints[i] = defPoints[i];
 
-        for (int j = 0; j < maxIter - j; j++)
-            if (points[j] == null 
-                || sortedPoints[j].compareTo(sortedPoints[j + 1]) == 0)
+        for (int j = 0; j < maxIter - 1; j++)
+            if (sortedPoints[j].compareTo(sortedPoints[j + 1]) == 0)
                 throw new IllegalArgumentException("Illegal point in array");
+        for (Point pt : defPoints)
+            System.out.println(pt);
 
-        startPtCounter = 0;
+        mCounter = 0;
         count = 0;
 
         for (int p = 0; p < maxIter; p++)
         {
-            Arrays.sort(sortedPoints, points[p].slopeOrder());
+            Arrays.sort(sortedPoints, defPoints[p].slopeOrder());
             int slopesCounter = 1;
             double slope = sortedPoints[0].slopeTo(sortedPoints[1]);
 
-            // sortedPoints[0] == points[p]
+            // sortedPoints[0] == defPoints[p]
             for (int q = 2; q < maxIter; q++)
             {
                 if (sortedPoints[0].slopeTo(sortedPoints[q]) == slope)
+                {
                     slopesCounter++;
+                    // last spot still correct slope case
+                    if (q == maxIter - 1 && slopesCounter >= 3 && canAdd(slope))
+                    {
+                        if (lineSegs.length == count)   resize(count * 2);
+                        lineSegs[count++] = new LineSegment(
+                                        sortedPoints[0], sortedPoints[q]);
+                    }
+                }
                 else
                 {
-                    if (slopesCounter >= 3 && canAdd(sortedPoints[0]))
+                    if (slopesCounter >= 3 && canAdd(slope))
                     {
                         if (lineSegs.length == count)   resize(count * 2);
                         lineSegs[count++] = new LineSegment(
                                         sortedPoints[0], sortedPoints[q - 1]);
-                        if (startPoints.length == startPtCounter)
-                            resizePt(startPoints, startPtCounter * 2);
-                        startPoints[startPtCounter++] = sortedPoints[0];
+                        if (usedSlopes.length == mCounter)
+                            resizeDbl(mCounter * 2);
+                        usedSlopes[mCounter++] = slope;
                     }
                     slope = sortedPoints[0].slopeTo(sortedPoints[q]);
                     slopesCounter = 1;
@@ -64,14 +80,14 @@ public class FastCollinearPoints
         }
     }
   
-    private boolean canAdd(Point pt)
+    private boolean canAdd(double m)
     {
-        for (Point point : startPoints)
+        for (int i = 0; i < mCounter; i++)
         {
-           if (point == pt)
+           if (usedSlopes[i] == m)
               return false;
         }
-       return true;
+        return true;
     } 
     
     private void resize(int capacity)
@@ -83,12 +99,12 @@ public class FastCollinearPoints
     }
     
     // these two should be merged
-    private void resizePt(Point[] a, int capacity)
+    private void resizeDbl(int capacity)
     {
-        Point[] copy = new Point[capacity];
-        for (int i = 0; i < a.length; i++)
-            copy[i] = a[i];
-        a = copy;
+        double[] copy = new double[capacity];
+        for (int i = 0; i < mCounter; i++)
+            copy[i] = usedSlopes[i];
+        usedSlopes = copy;
     }
    
 
