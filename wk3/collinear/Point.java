@@ -7,7 +7,6 @@
  *  For use on Coursera, Algorithms Part I programming assignment.
  *
  ******************************************************************************/
-import java.util.Arrays;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
 
@@ -101,11 +100,6 @@ public class Point implements Comparable<Point> {
      */
     public Comparator<Point> slopeOrder() {
         return (a, b) -> Double.compare(slopeTo(a), slopeTo(b));
-            // double checkSlope = a.slopeTo(b);
-            // if (checkSlope == Double.NEGATIVE_INFINITY
-            //     || checkSlope == Double.POSITIVE_INFINITY
-            //     || checkSlope == 0.0)
-            //     return checkslope;
     }
 
 

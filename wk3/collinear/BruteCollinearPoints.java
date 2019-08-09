@@ -10,8 +10,9 @@ public class BruteCollinearPoints
 
     public BruteCollinearPoints(Point[] points)
     {
-        Point[] defPoints = points.clone();
-        if (defPoints == null)
+        Point[] defPoints = new Point[points.length];
+
+        if (points == null)
             throw new IllegalArgumentException("The array is null.");
         for (int i = 0; i < points.length; i++)
         {
