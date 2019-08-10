@@ -8,8 +8,10 @@ public class FastCollinearPoints
     private LineSegment[] lineSegs;
     private Point[] sortedPoints;
     private Point[] startPoints;
+    private Point[] endPoints;
     private double[] usedSlopes;
     private int startPtCounter;
+    private int endPtCount;
     private int mCount;
     private int count;
    
@@ -32,6 +34,7 @@ public class FastCollinearPoints
         lineSegs = new LineSegment[1];
         usedSlopes = new double[1];
         startPoints = new Point[1];
+        endPoints = new Point[1];
         sortedPoints = new Point[maxIter];
         Arrays.sort(defPoints);
         for (int i = 0; i < maxIter; i++)
@@ -47,39 +50,42 @@ public class FastCollinearPoints
         for (int p = 0; p < maxIter; p++)
         {
             Arrays.sort(sortedPoints, defPoints[p].slopeOrder());
-            int slopesCounter = 1;
+            int slopesCounter = 0;
             double slope = sortedPoints[0].slopeTo(sortedPoints[1]);
             Point endPoint = new Point(-32767,-32767);
+            Point startPoint = new Point(32767, 32767);
 
             // sortedPoints[0] == defPoints[p]
-            for (int q = 2; q < maxIter; q++)
+            for (int q = 1; q < maxIter; q++)
             {
                 if (sortedPoints[0].slopeTo(sortedPoints[q]) == slope)
                 {
                     slopesCounter++;
                     if (sortedPoints[q].compareTo(endPoint) > 0)
                         endPoint = sortedPoints[q];
+                    if (sortedPoints[q].compareTo(startPoint) < 0)
+                        startPoint = sortedPoints[q];
                     // last spot still correct slope case
-                    if (q == maxIter - 1 && slopesCounter >= 3 && canAdd(endPoint, slope))
-                    {
-                        if (lineSegs.length == count)   resize(count * 2);
-                        lineSegs[count++] = new LineSegment(
-                                        sortedPoints[0], endPoint);
-                    }
+                    // if (q == maxIter - 1 && slopesCounter >= 3 && canAdd(sortedPoints[0], startPoint, slope))
+                    // {
+                    //     if (lineSegs.length == count)   resize(count * 2);
+                    //     lineSegs[count++] = new LineSegment(
+                    //                     sortedPoints[0], endPoint);
+                    // }
                 }
                 else
                 {
-                    if (slopesCounter >= 3 && canAdd(sortedPoints[0], slope))
+                    if (slopesCounter >= 3 && canAdd(sortedPoints[0], startPoint, endPoint))
                     {
                         if (lineSegs.length == count)   resize(count * 2);
                         lineSegs[count++] = new LineSegment(
                                         sortedPoints[0], endPoint);
                         if (startPoints.length == startPtCounter)
                             resizePt(startPtCounter * 2);
-                        startPoints[startPtCounter++] = sortedPoints[0];
-                        // if (startPoints.length == startPtCounter)
-                        //     resizePt(startPtCounter * 2);
-                        // startPoints[startPtCounter++] = endPoint;
+                        startPoints[startPtCounter++] = startPoint;;
+                        if (endPoints.length == endPtCount)
+                            resizeEt(endPtCount * 2);
+                        endPoints[endPtCount++] = endPoint;
                         // for (int i = 0; i < 2; i++)
                         // {
                         if (usedSlopes.length == mCount)
@@ -89,17 +95,22 @@ public class FastCollinearPoints
                     }
                     slope = sortedPoints[0].slopeTo(sortedPoints[q]);
                     slopesCounter = 1;
+                    endPoint = new Point(-32767,-32767);
+                    startPoint = new Point(32767, 32767);
+                    if (sortedPoints[q].compareTo(endPoint) > 0)
+                        endPoint = sortedPoints[q];
+                    if (sortedPoints[q].compareTo(startPoint) < 0)
+                        startPoint = sortedPoints[q];
                 }
             }
         }
     }
   
-    private boolean canAdd(Point pt, double m)
+    private boolean canAdd(Point pt, Point start, Point end)
     {
-        for (int i = 0; i < startPtCounter; i++)
-           if (pt.compareTo(startPoints[i]) > 0 && usedSlopes[i] == m)
-              return false;
-        return true;
+       if (pt.compareTo(start) < 0)
+          return true;
+        return false;
     }
     
     private void resize(int capacity)
@@ -117,6 +128,14 @@ public class FastCollinearPoints
         for (int i = 0; i < startPtCounter; i++)
             copy[i] = startPoints[i];
         startPoints = copy;
+    }
+    
+    private void resizeEt(int capacity)
+    {
+        Point[] copy = new Point[capacity];
+        for (int i = 0; i < endPtCount; i++)
+            copy[i] = endPoints[i];
+        endPoints = copy;
     }
     
     

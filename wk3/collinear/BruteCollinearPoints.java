@@ -11,7 +11,6 @@ public class BruteCollinearPoints
     public BruteCollinearPoints(Point[] points)
     {
         Point[] defPoints = new Point[points.length];
-
         if (points == null)
             throw new IllegalArgumentException("The array is null.");
         for (int i = 0; i < points.length; i++)
@@ -25,7 +24,6 @@ public class BruteCollinearPoints
         for (int i = 0; i < defPoints.length - 1; i++)
             if (defPoints[i].compareTo(defPoints[i + 1]) == 0)
                 throw new IllegalArgumentException("Illegal point in array");
-   
         lineSegs = new LineSegment[1];
         count = 0;
         int maxIter = defPoints.length;
