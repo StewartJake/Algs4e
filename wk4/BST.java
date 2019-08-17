@@ -96,6 +96,43 @@ public class BST<Key extaneds Comparable<Key>, Value>
 
 
     public Iterable<key> iterator()
-    {       }
+    {
+        Queue<Key> q = new Queue<key>();
+        inorder(root, q);
+        return q;
+    }
 
+
+    private void inorder(Nodes x, Queue<Key> q)
+    {
+        if (x == null) return;
+        inorder(x.left, q);
+        q.enqueue(x.key);
+        inorder(x.right, q);
+    }
+
+
+    public void deleteMin()
+    {   root = deleteMin(root);   }
+
+
+    private Node deleteMin(Node x)
+    {
+        if (x.left == null) return x.right;
+        x.left = deleteMin(x.left);
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
+    }
+
+    public void deleteMax()
+    {   root = deleteMax(root); }
+
+
+    private Node deleteMax(Node x)
+    {
+        if (x.right == null) return x.left;
+        x.right = deleteMax(x.right);
+        x.count = 1 + size(x.left) + size(x.right);
+        return x;
+    }
 }
