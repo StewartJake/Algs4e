@@ -2,15 +2,17 @@ import java.util.Arrays;
 import edu.princeton.cs.algs4.StdOut;
 import edu.princeton.cs.algs4.Queue;
 
+
 public class Board
 {
+    final   int     MAX_INT = 2147483647;
     private int     N;
     private int     blankRow;
     private int     blankCol;
     private int[][] board;
     private int[][] goal;
-    private int     manhattan;
-    private int     hamming;
+    private int     manhattan = MAX_INT;
+    private int     hamming = MAX_INT;
 
 
     public Board(int[][] tiles)
@@ -19,8 +21,6 @@ public class Board
         this.N          = tiles.length;
         this.goal       = new int[N][N];
         this.board      = tiles;
-        this .manhattan = this.manhattan();
-        this.hamming    = this.hamming();
 
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
@@ -57,17 +57,20 @@ public class Board
 
     public int hamming()
     {
+        if (this.hamming != MAX_INT)   return this.hamming;
         int count = 0;
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
                 if (board[i][j] != goal[i][j] && board[i][j] != 0)
                     count++;
+        this.hamming = count;
         return count;
     }
 
 
     public int manhattan()
     {
+        if (this.manhattan != MAX_INT) return this.manhattan;
         int sum = 0;
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
@@ -85,6 +88,7 @@ public class Board
                             }
                 }
             }
+        this.manhattan = sum;
         return sum;
     }
 
@@ -113,11 +117,11 @@ public class Board
         Queue<Board> bq = new Queue<Board>();
         if (blankRow > 0)
             bq.enqueue(switchZero(blankRow - 1, blankCol));
-        if (blankRow < N)
+        if (blankRow < N - 1)
             bq.enqueue(switchZero(blankRow + 1, blankCol));
         if (blankCol > 0)
             bq.enqueue(switchZero(blankRow, blankCol - 1));
-        if (blankCol < N)
+        if (blankCol < N - 1)
             bq.enqueue(switchZero(blankRow, blankCol + 1));
         return bq; 
     }
