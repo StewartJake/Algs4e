@@ -111,33 +111,68 @@ public class Board
     {
         Queue<Board> bq = new Queue<Board>();
         if (blankRow > 0)
-            bq.enqueue(switchTwo(blankRow - 1, blankCol));
+            bq.enqueue(switchZero(blankRow - 1, blankCol));
         if (blankRow < N)
-            bq.enqueue(switchTwo(blankRow + 1, blankCol));
+            bq.enqueue(switchZero(blankRow + 1, blankCol));
         if (blankCol > 0)
-            bq.enqueue(switchTwo(blankRow, blankCol - 1));
+            bq.enqueue(switchZero(blankRow, blankCol - 1));
         if (blankCol < N)
-            bq.enqueue(switchTwo(blankRow, blankCol + 1));
+            bq.enqueue(switchZero(blankRow, blankCol + 1));
         return bq; 
     }
 
 
-    private Board switchTwo(int r, int c)
+    private Board switchZero(int r, int c)
+    {   return switchTwo(r, c, blankRow, blankCol); }
+
+
+    private Board switchTwo(int r1, int c1, int r2, int c2)
     {
-        int[][] nb = this.board.clone();
-        int temp = nb[r][c];
-        nb[r][c] = 0;//board[blankRow][blankCol];
-        nb[blankRow][blankCol] = temp;
-        this.blankRow = r;
-        this.blankCol = c;
+        int[][] nb = new int[N][N];
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                nb[i][j] = board[i][j];
+        int temp = nb[r1][c1];
+        nb[r1][c1] = board[r2][c2];
+        nb[r2][c2] = temp;
         Board neighbor = new Board(nb);
         return neighbor;
     }
 
 
-//     public Board twin()
-//     {}
-// 
+    public Board twin()
+    {   
+        int[][] copy = new int[N][N];
+        for (int i = 0; i < N; i++)
+            for (int j = 0; j < N; j++)
+                copy[i][j] = board[i][j];
+        int r1;
+        int c1;
+        int r2;
+        int c2;
+        if (copy[1][0] != 0)
+        {
+            r1 = 1;
+            c1 = 0;
+        }
+        else
+        {
+            r1 = 0;
+            c1 = 1;
+        }
+        if (copy[2][1] != 0)
+        {
+            r2 = 2;
+            c2 = 1;
+        }
+        else
+        {
+            r2 = 1;
+            c2 = 2;
+        }
+        return switchTwo(r1, c1, r2, c2);
+    }
+
 
     public static void main(String[] args)
     {
@@ -158,5 +193,6 @@ public class Board
         StdOut.println(g.isGoal());
         for (Board nei : b.neighbors())
             StdOut.println(nei);
+        StdOut.println(b.twin());
     }
 }
