@@ -9,17 +9,18 @@ public class Board
     private int     blankCol;
     private int[][] board;
     private int[][] goal;
-    private int[]   goal1;
-    private int[]   board1;
+    private int     manhattan;
+    private int     hamming;
 
 
     public Board(int[][] tiles)
     {
-        int count   = 1;
-        this.N      = tiles.length;
-        this.goal   = new int[N][N];
-        this.board  = tiles;
-        this.goal1  = new int[N*N];
+        int count       = 1;
+        this.N          = tiles.length;
+        this.goal       = new int[N][N];
+        this.board      = tiles;
+        this .manhattan = this.manhattan();
+        this.hamming    = this.hamming();
 
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
