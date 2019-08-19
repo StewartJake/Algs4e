@@ -12,13 +12,19 @@ public class Solver
     private class Node implements Comparable<Node>
     {
         private int     priority;
+        // these 2 for debugging 
+        private int     manhattan;
+        private int     moves;
         private Board   board;
         private Node    prev;
 
-        public Node(int priority, Board board)
+        public Node(int currMoves, Board board, Node previous)
         {
-            this.priority    = priority;
-            this.board       = board;
+            this.moves      = currMoves;
+            this.board      = board;
+            this.prev       = previous;
+            this.manhattan  = board.manhattan();
+            this.priority   = this.manhattan + this.moves;
         }
 
 
@@ -41,20 +47,20 @@ public class Solver
         MinPQ<Node> pq      = new MinPQ<Node>();
         //MinPQ<Node> twinQ   = new MinPQ<Node>();
         //Board       twin    = initial.twin();
-        pq.insert(boardToNode(initial, this.moves, null));
+        pq.insert(new Node(this.moves, initial, null));
         //twinQ.insert(boardToNode(twin, this.moves, null));
-        Node iNode;
-        //Node tNode;
+        Node iniNode;
+        //Node twiNode;
         while (true)
         {
-            iNode = pq.delMin();
+            iniNode = pq.delMin();
             //tNode = twinQ.delMin();
-            initial = iNode.board();
+            initial = iniNode.board();
             //twin    = tNode.board();
             
             for (Board neighBoard : initial.neighbors())
-                if (iNode.prev == null || !neighBoard.equals(iNode.prev.board()))
-                    pq.insert(boardToNode(neighBoard, moves, iNode));
+                if (iniNode.prev == null || !neighBoard.equals(iniNode.prev.board()))
+                    pq.insert(new Node(this.moves, neighBoard, iniNode));
             // for (Board twinBoard : twin.neighbors())
             //     if (tNode.prev == null || !twinBoard.equals(tNode.prev.board()))
             //         twinQ.insert(boardToNode(twinBoard, this.moves, tNode));
@@ -68,15 +74,6 @@ public class Solver
             //}
             moves++;
         }
-    }
-
-
-    private Node boardToNode(Board b, int numMoves, Node prev)
-    {
-        int priority = numMoves + b.manhattan();
-        Node testNode = new Node(priority, b);
-        testNode.prev = prev;
-        return testNode;
     }
 
 
