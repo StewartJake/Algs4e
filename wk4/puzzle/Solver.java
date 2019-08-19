@@ -13,8 +13,7 @@ public class Solver
     {
         private int     priority;
         private Board   board;
-        private Node    left    = null;
-        private Node    right   = null;
+        private Node    prev;
 
         public Node(int priority, Board board)
         {
@@ -40,36 +39,43 @@ public class Solver
         if (initial == null)
             throw new IllegalArgumentException("Illegitimate Board");
         MinPQ<Node> pq      = new MinPQ<Node>();
-        MinPQ<Node> twinQ   = new MinPQ<Node>();
-        Board       twin    = initial.twin();
-        pq.insert(boardToNode(initial));
-        twinQ.insert(boardToNode(twin));
-        while (!initial.isGoal() && !twin.isGoal())
+        //MinPQ<Node> twinQ   = new MinPQ<Node>();
+        //Board       twin    = initial.twin();
+        pq.insert(boardToNode(initial, this.moves, null));
+        //twinQ.insert(boardToNode(twin, this.moves, null));
+        Node iNode;
+        //Node tNode;
+        while (true)
         {
-            Board previous = initial;
-            Board prevTwin = twin;
-            initial = pq.delMin().board();
-            twin    = twinQ.delMin().board();
+            iNode = pq.delMin();
+            //tNode = twinQ.delMin();
+            initial = iNode.board();
+            //twin    = tNode.board();
             
             for (Board neighBoard : initial.neighbors())
-                if (neighBoard != previous)
-                    pq.insert(boardToNode(neighBoard));
-            for (Board twinBoard : twin.neighbors())
-                if (twinBoard != prevTwin)
-                    twinQ.insert(boardToNode(twinBoard));
+                if (iNode.prev == null || !neighBoard.equals(iNode.prev.board()))
+                    pq.insert(boardToNode(neighBoard, moves, iNode));
+            // for (Board twinBoard : twin.neighbors())
+            //     if (tNode.prev == null || !twinBoard.equals(tNode.prev.board()))
+            //         twinQ.insert(boardToNode(twinBoard, this.moves, tNode));
             
             this.bq.enqueue(initial);
+            if (initial.isGoal())   break;
+            //if (twin.isGoal())
+            //{
+            //    this.solvable = false;
+            //    break;
+            //}
             moves++;
         }
-        this.solvable = (initial.isGoal()) ? true : false;
-        moves--;    // to account for the initialization
     }
 
 
-    private Node boardToNode(Board b)
+    private Node boardToNode(Board b, int numMoves, Node prev)
     {
-        int priority = this.moves + b.manhattan();
+        int priority = numMoves + b.manhattan();
         Node testNode = new Node(priority, b);
+        testNode.prev = prev;
         return testNode;
     }
 
@@ -88,26 +94,26 @@ public class Solver
 
     public static void main(String[] args)
     {
-        // create initial board from file
-    In in = new In(args[0]);
-    int n = in.readInt();
-    int[][] tiles = new int[n][n];
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            tiles[i][j] = in.readInt();
-    Board initial = new Board(tiles);
+            // create initial board from file
+        In in = new In(args[0]);
+        int n = in.readInt();
+        int[][] tiles = new int[n][n];
+        for (int i = 0; i < n; i++)
+            for (int j = 0; j < n; j++)
+                tiles[i][j] = in.readInt();
+        Board initial = new Board(tiles);
 
-    // solve the puzzle
-    Solver solver = new Solver(initial);
+        // solve the puzzle
+        Solver solver = new Solver(initial);
 
-    // print solution to standard output
-    if (!solver.isSolvable())
-        StdOut.println("No solution possible");
-    else {
-        StdOut.println("Minimum number of moves = " + solver.moves());
-        for (Board board : solver.solution())
-            StdOut.println(board);
-    }
+        // print solution to standard output
+        if (!solver.isSolvable())
+            StdOut.println("No solution possible");
+        else {
+            StdOut.println("Minimum number of moves = " + solver.moves());
+            // for (Board board : solver.solution())
+            //     StdOut.println(board);
+        }
         // int n = 3;
         // int[][] john    = {{8,1,3},{4,0,2},{7,6,5}};
         // int[][] step4   = {{0,1,3},{4,2,5},{7,8,6}};

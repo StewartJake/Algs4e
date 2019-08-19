@@ -5,49 +5,45 @@ import edu.princeton.cs.algs4.Queue;
 
 public class Board
 {
-    final   int     MAX_INT = 2147483647;
+    private static final int maxInt = Integer.MAX_VALUE;
     private int     N;
     private int     blankRow;
     private int     blankCol;
     private int[][] board;
-    private int[][] goal;
-    private int     manhattan = MAX_INT;
-    private int     hamming = MAX_INT;
+    private int     manhattan = maxInt;
+    private int     hamming = maxInt;
 
 
     public Board(int[][] tiles)
     {
-        int count       = 1;
+
         this.N          = tiles.length;
-        this.goal       = new int[N][N];
-        this.board      = tiles;
+        this.board      = new int[N][N];
 
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
+            {
+                board[i][j] = tiles[i][j];
                 if (tiles[i][j] == 0)
                 {
                     this.blankRow = i;
                     this.blankCol = j;
-                    break;
                 }
-
-        for (int i = 0; i < N; i++)
-            for (int j = 0; j < N; j++)
-                goal[i][j] = count++;
-        goal[N - 1][N - 1] = 0;
+            }
     }
 
 
     public String toString()
     {
-        String outStr ="" + N + "\n";
+        StringBuilder outStr = new StringBuilder();
+        outStr.append(N + "\n");
         for (int i = 0; i < N; i++)
         {
-            for (int j = 0; j <N; j++)
-                outStr += board[i][j] + " ";
-            outStr += "\n";
+            for (int j = 0; j < N; j++)
+                outStr.append(String.format("%2d ", board[i][j]));
+            outStr.append("\n");
         }
-        return outStr;
+        return outStr.toString();
     }
 
 
@@ -57,12 +53,12 @@ public class Board
 
     public int hamming()
     {
-        if (this.hamming != MAX_INT)   return this.hamming;
+        if (this.hamming != maxInt)   return this.hamming;
         int count = 0;
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
-                if (board[i][j] != goal[i][j] && board[i][j] != 0)
-                    count++;
+                if (board[i][j] != 0)
+                    count += calcHamming(board[i][j], i, j);
         this.hamming = count;
         return count;
     }
@@ -70,31 +66,38 @@ public class Board
 
     public int manhattan()
     {
-        if (this.manhattan != MAX_INT) return this.manhattan;
+        if (this.manhattan != maxInt) return this.manhattan;
         int sum = 0;
         for (int i = 0; i < N; i++)
             for (int j = 0; j < N; j++)
             {
-                // might have to speed this up
-                if (goal[i][j] != 0)
+                if (board[i][j] != 0)
                 {
-                    int current = goal[i][j];
-                    for (int x = 0; x < N; x++)
-                        for (int y = 0; y < N; y++)
-                            if (board[x][y] == current)
-                            {
-                                sum += (x-i < 0) ? (i-x) : (x-i);
-                                sum += (y-j < 0) ? (j-y) : (y-j);
-                            }
+                    sum += calcManhattan(board[i][j], i, j);
                 }
             }
         this.manhattan = sum;
         return sum;
     }
 
+    private int calcManhattan(int tile, int r, int c)
+    {
+        int goalRow = (tile - 1) / N;
+        int goalCol = (tile - 1) % N;
+        int sum     = 0;
+        
+        sum += (goalRow - r < 0) ? (r - goalRow) : (goalRow - r);
+        sum += (goalCol - c < 0) ? (c - goalCol) : (goalCol - c);
+        return sum;
+    }
+
+    
+    private int calcHamming(int tile, int r, int c)
+    {   return (calcManhattan(tile, r, c) == 0) ? 0 : 1;    }
+
 
     public boolean isGoal()
-    {   return Arrays.deepEquals(this.board, this.goal);    }
+    {   return (hamming() == 0);    }
 
 
     public boolean equals(Object y)
@@ -155,25 +158,25 @@ public class Board
         int c1;
         int r2;
         int c2;
-        if (copy[1][0] != 0)
+        if (copy[N-1][0] != 0)
         {
-            r1 = 1;
+            r1 = N-1;
             c1 = 0;
         }
         else
         {
             r1 = 0;
-            c1 = 1;
+            c1 = N-1;
         }
-        if (copy[2][1] != 0)
+        if (copy[0][0] != 0)
         {
-            r2 = 2;
-            c2 = 1;
+            r2 = 0;
+            c2 = 0;
         }
         else
         {
-            r2 = 1;
-            c2 = 2;
+            r2 = N-1;
+            c2 = N-1;
         }
         return switchTwo(r1, c1, r2, c2);
     }
@@ -181,14 +184,12 @@ public class Board
 
     public static void main(String[] args)
     {
-        int n = 3;
-        int[][] bob     = {{8,1,3},{4,0,2},{7,6,5}};
-        int[][] goal    = {{1,2,3},{4,5,6},{7,8,0}};
-        int[][] veritas = {{1,2,3},{4,5,6},{7,8,0}};
+        int[][] bob     = {{8, 1, 3}, {4, 0, 2}, {7, 6, 5}};
+        int[][] goal    = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
+        int[][] veritas = {{1, 2, 3}, {4, 5, 6}, {7, 8, 0}};
         Board b = new Board(bob);
         Board g = new Board(goal);
         Board v = new Board(veritas);
-        Board z = v;
         StdOut.println(b);
         StdOut.println(b.dimension());
         StdOut.println(b.hamming());
