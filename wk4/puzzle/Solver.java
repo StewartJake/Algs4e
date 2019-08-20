@@ -5,26 +5,23 @@ import edu.princeton.cs.algs4.Queue;
 
 public class Solver
 {
-    private int             moves       = 0;
+    private int             numMoves    = 0;
     private Queue<Board>    bq          = new Queue<Board>();
     private boolean         solvable    = true;
 
     private class Node implements Comparable<Node>
     {
         private int     priority;
-        // these 2 for debugging 
-        private int     manhattan;
         private int     moves;
         private Board   board;
         private Node    prev;
 
-        public Node(int currMoves, Board board, Node previous)
+        public Node(int moves, Board board, Node previous)
         {
-            this.moves      = currMoves;
+            this.moves      = moves;
             this.board      = board;
             this.prev       = previous;
-            this.manhattan  = board.manhattan();
-            this.priority   = this.manhattan + this.moves;
+            this.priority   = board.manhattan() + this.moves;
         }
 
 
@@ -45,34 +42,39 @@ public class Solver
         if (initial == null)
             throw new IllegalArgumentException("Illegitimate Board");
         MinPQ<Node> pq      = new MinPQ<Node>();
-        //MinPQ<Node> twinQ   = new MinPQ<Node>();
-        //Board       twin    = initial.twin();
-        pq.insert(new Node(this.moves, initial, null));
-        //twinQ.insert(boardToNode(twin, this.moves, null));
+        MinPQ<Node> twinQ   = new MinPQ<Node>();
+        Board       twin    = initial.twin();
+        pq.insert(new Node(0, initial, null));
+        twinQ.insert(new Node(0, twin, null));
         Node iniNode;
-        //Node twiNode;
+        Node twiNode;
         while (true)
         {
             iniNode = pq.delMin();
-            //tNode = twinQ.delMin();
+            twiNode = twinQ.delMin();
             initial = iniNode.board();
-            //twin    = tNode.board();
+            twin    = twiNode.board();
             
             for (Board neighBoard : initial.neighbors())
                 if (iniNode.prev == null || !neighBoard.equals(iniNode.prev.board()))
-                    pq.insert(new Node(this.moves, neighBoard, iniNode));
-            // for (Board twinBoard : twin.neighbors())
-            //     if (tNode.prev == null || !twinBoard.equals(tNode.prev.board()))
-            //         twinQ.insert(boardToNode(twinBoard, this.moves, tNode));
+                    pq.insert(new Node(iniNode.moves + 1, neighBoard, iniNode));
+            for (Board twinBoard : twin.neighbors())
+                if (twiNode.prev == null || !twinBoard.equals(twiNode.prev.board()))
+                    twinQ.insert(new Node(twiNode.moves + 1, twinBoard, twiNode));
             
             this.bq.enqueue(initial);
-            if (initial.isGoal())   break;
-            //if (twin.isGoal())
-            //{
-            //    this.solvable = false;
-            //    break;
-            //}
-            moves++;
+            if (initial.isGoal())
+            {
+                this.numMoves = iniNode.moves;
+                break;
+            }
+            if (twin.isGoal())
+            {
+                this.solvable = false;
+                this.numMoves = twiNode.moves;
+                break;
+
+            }
         }
     }
 
@@ -82,7 +84,7 @@ public class Solver
 
 
     public int moves()
-    {   return this.moves;  }
+    {   return this.numMoves;  }
 
 
     public Iterable<Board> solution()
@@ -108,8 +110,8 @@ public class Solver
             StdOut.println("No solution possible");
         else {
             StdOut.println("Minimum number of moves = " + solver.moves());
-            // for (Board board : solver.solution())
-            //     StdOut.println(board);
+            for (Board board : solver.solution())
+                StdOut.println(board);
         }
         // int n = 3;
         // int[][] john    = {{8,1,3},{4,0,2},{7,6,5}};
