@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.TreeSet;
 import edu.princeton.cs.algs4.Point2D;
 import edu.princeton.cs.algs4.RectHV;
@@ -5,7 +7,8 @@ import edu.princeton.cs.algs4.StdDraw;
 
 public class PointSET
 {
-    private TreeSet<Point2D> ps;
+    private TreeSet<Point2D>    ps;
+
 
     public PointSET()
     {
@@ -40,13 +43,28 @@ public class PointSET
     }
 
 
+    public Iterable<Point2D> range(RectHV rect)
+    {
+        Queue<Point2D> rangeQ = new LinkedList<Point2D>();
+        for (Point2D p : ps)
+            if (rect.contains(p))
+                rangeQ.add(p);
+        return rangeQ;
+    }
 
-    // public Iterable<Point2D> range(RectHV rect)
-    // {}
 
-
-    // public Point2D nearest(Point2D p)
-    // {}
+    public Point2D nearest(Point2D p)
+    {
+        double  champDist   = Double.POSITIVE_INFINITY;
+        Point2D champ       = new Point2D(0.0, 0.0);
+        for (Point2D q : ps)
+            if (p.distanceSquaredTo(q) < champDist)
+            {
+                champDist   = p.distanceSquaredTo(q);
+                champ       = q;
+            }
+        return champ;
+    }
 
 
     public static void main(String[] args)
@@ -57,8 +75,10 @@ public class PointSET
         PointSET ps = new PointSET();
         ps.insert(on);
         ps.insert(tw);
-        ps.insert(th); 
-        ps.draw();
+        ps.insert(th);
+        RectHV rect = new RectHV(0.0, 0.0, 4.3, 4.9);
+        System.out.println(ps.range(rect));
+        System.out.println(ps.nearest(new Point2D(0.0, 0.0)));
     }
 }
 
