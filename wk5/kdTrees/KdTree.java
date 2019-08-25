@@ -7,6 +7,7 @@ public class KdTree
 {
     int     size;
     Node    root;
+    Queue<Node> pQ = new LinkedList<Node>();      //debugging
 
     public KdTree()
     {
@@ -31,6 +32,16 @@ public class KdTree
             this.vertical = (prev == null) ? true : !prev.vertical;
             this.val = p;
         }
+
+        public String toString()
+        {
+            StringBuilder s = new StringBuilder();
+            s.append(val + "\n");
+            s.append("Left "        + ((lebo == null) ? null : lebo.val)  + "\n");
+            s.append("Right "       + ((rito == null) ? null : rito.val)  + "\n");
+            s.append("Vertical "    + vertical  + "\n");
+            return s.toString();
+        }
     }
 
     public boolean isEmpty()
@@ -52,18 +63,20 @@ public class KdTree
         if (x == null)
         {
             size++;
-            return new Node(p, prev);
+            Node n = new Node(p, prev);
+            pQ.add(n);
+            return n; //new Node(p, prev);
         }
         if (p.equals(x.val))    x.val = p;
         if (x.vertical)
         {
-            if (p.x() > x.key)  x = put(x.rito, p, x);
-            if (p.x() < x.key)  x = put(x.lebo, p, x);
+            if (p.x() > x.key)  x.rito = put(x.rito, p, x);
+            if (p.x() < x.key)  x.lebo = put(x.lebo, p, x);
         }
         if (!x.vertical)
         {
-            if (p.y() > x.key)  x = put(x.rito, p, x);
-            if (p.y() < x.key)  x = put(x.lebo, p, x);
+            if (p.y() > x.key)  x.rito = put(x.rito, p, x);
+            if (p.y() < x.key)  x.lebo = put(x.lebo, p, x);
         }
         return x;
     }
@@ -92,7 +105,8 @@ public class KdTree
 
 
     public void draw()
-    {}
+    {
+    }
 
 
     public Iterable<Point2D> range(RectHV rect)
@@ -135,10 +149,16 @@ public class KdTree
         Point2D p5  = new Point2D(5.0, 5.0);
         KdTree kt   = new KdTree();
         RectHV rect = new RectHV(-1.0, -1.0, 1.0, 1.0); 
-        kt.insert(p0);
+        kt.insert(p5);
         kt.insert(p2);
+        kt.insert(p4);
+        //kt.insert(p3);
+        kt.insert(p0);
+        kt.insert(p1);
+        for (Node n : kt.pQ)
+            System.out.println(n);
         System.out.println(kt.contains(p3));
         System.out.println(kt.contains(p2));
-        System.out.println(kt.range(rect));
+        //System.out.println(kt.range(rect));
     }
 }
