@@ -1,4 +1,7 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import edu.princeton.cs.algs4.Point2D;
+import edu.princeton.cs.algs4.RectHV;
 
 public class KdTree
 {
@@ -92,8 +95,30 @@ public class KdTree
     {}
 
 
-    // public Iterable<Point2D> range(RectHV rect)
-    // {}
+    public Iterable<Point2D> range(RectHV rect)
+    {
+        Queue<Point2D> rQ = new LinkedList<Point2D>(); 
+        Node x = root;
+        while (x != null)
+        {
+            if (rect.contains(x.val))   rQ.add(x.val);
+            if (x.vertical)
+            {
+                if      (rect.xmax() < x.val.x())   x = x.lebo;
+                else if (rect.xmax() > x.val.x())   x = x.rito;
+                else if (rect.xmin() < x.val.x() && rect.xmax() > x.val.x())
+                {}
+            }
+            if (!x.vertical)
+            {
+                if      (rect.ymax() < x.val.y())   x = x.lebo;
+                else if (rect.ymax() > x.val.y())   x = x.rito;
+                else if (rect.ymin() < x.val.y() && rect.ymax() > x.val.y())
+                {}
+            }
+        }
+        return rQ;
+    }
 
 
     // public Point2D nearest(Point2D p)
@@ -102,16 +127,18 @@ public class KdTree
 
     public static void main(String[] args)
     {
-        Point2D p0 = new Point2D(0.0, 0.0);
-        Point2D p1 = new Point2D(1.0, 1.0);
-        Point2D p2 = new Point2D(2.0, 2.0);
-        Point2D p3 = new Point2D(3.0, 3.0);
-        Point2D p4 = new Point2D(4.0, 4.0);
-        Point2D p5 = new Point2D(5.0, 5.0);
-        KdTree kt = new KdTree();
+        Point2D p0  = new Point2D(0.0, 0.0);
+        Point2D p1  = new Point2D(1.0, 1.0);
+        Point2D p2  = new Point2D(2.0, 2.0);
+        Point2D p3  = new Point2D(3.0, 3.0);
+        Point2D p4  = new Point2D(4.0, 4.0);
+        Point2D p5  = new Point2D(5.0, 5.0);
+        KdTree kt   = new KdTree();
+        RectHV rect = new RectHV(-1.0, -1.0, 1.0, 1.0); 
         kt.insert(p0);
         kt.insert(p2);
         System.out.println(kt.contains(p3));
         System.out.println(kt.contains(p2));
+        System.out.println(kt.range(rect));
     }
 }
