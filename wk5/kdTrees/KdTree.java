@@ -111,28 +111,55 @@ public class KdTree
 
     public Iterable<Point2D> range(RectHV rect)
     {
-        Queue<Point2D> rQ = new LinkedList<Point2D>(); 
-        Node x = root;
-        while (x != null)
-        {
-            if (rect.contains(x.val))   rQ.add(x.val);
-            if (x.vertical)
-            {
-                if      (rect.xmax() < x.val.x())   x = x.lebo;
-                else if (rect.xmax() > x.val.x())   x = x.rito;
-                else if (rect.xmin() < x.val.x() && rect.xmax() > x.val.x())
-                {}
-            }
-            if (!x.vertical)
-            {
-                if      (rect.ymax() < x.val.y())   x = x.lebo;
-                else if (rect.ymax() > x.val.y())   x = x.rito;
-                else if (rect.ymin() < x.val.y() && rect.ymax() > x.val.y())
-                {}
-            }
-        }
+        Queue<Point2D> rQ = new LinkedList<Point2D>();
+        contains(root, rect, rQ);
+        // Node x = root;
+        // while (x != null)
+        // {
+        //     if (rect.contains(x.val))   rQ.add(x.val);
+        //     if      (x.vertical)
+        //     {
+        //         if      (rect.xmax() < x.val.x())   x = x.lebo;
+        //         else if (rect.xmax() > x.val.x())   x = x.rito;
+        //         // else if (rect.xmin() < x.val.x() && rect.xmax() > x.val.x())
+        //         // {}
+        //     }
+        //     else if (!x.vertical)
+        //     {
+        //         if      (rect.ymax() < x.val.y())   x = x.lebo;
+        //         else if (rect.ymax() > x.val.y())   x = x.rito;
+        //         // else if (rect.ymin() < x.val.y() && rect.ymax() > x.val.y())
+        //         // {}
+        //     }
+        // }
         return rQ;
     }
+
+    private void contains(Node x, RectHV rect, Queue<Point2D> rQ)
+    {
+        if (rect.contains(x.val))   rQ.add(x.val);
+        if      (x.vertical)
+        {
+            if      (rect.xmax() < x.val.x())   contains(x.lebo, rect, rQ);
+            else if (rect.xmax() > x.val.x())   contains(x.rito, rect, rQ);
+            else if (rect.xmin() <=  x.val.x() && rect.xmax() >= x.val.x())
+            {
+                contains(x.lebo, rect, rQ);
+                contains(x.rito, rect, rQ);
+            }
+        }
+        else if (!x.vertical)
+        {
+            if      (rect.ymax() < x.val.y())   contains(x.lebo, rect, rQ);
+            else if (rect.ymax() > x.val.y())   contains(x.rito, rect, rQ);
+            else if (rect.ymin() < x.val.y() && rect.ymax() > x.val.y())
+            {
+                contains(x.lebo, rect, rQ);
+                contains(x.rito, rect, rQ);
+            }
+        }
+    }
+
 
 
     // public Point2D nearest(Point2D p)
@@ -152,13 +179,13 @@ public class KdTree
         kt.insert(p5);
         kt.insert(p2);
         kt.insert(p4);
-        //kt.insert(p3);
+        kt.insert(p3);
         kt.insert(p0);
         kt.insert(p1);
         for (Node n : kt.pQ)
             System.out.println(n);
         System.out.println(kt.contains(p3));
         System.out.println(kt.contains(p2));
-        //System.out.println(kt.range(rect));
+        System.out.println(kt.range(rect));
     }
 }
