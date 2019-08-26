@@ -105,7 +105,7 @@ public class KdTree
             if (p.equals(x.val)) return true;
             if (x.vertical)
             {
-                if      (p.x() >=   x.key)x =       x.rito;
+                if      (p.x() >=   x.key)          x = x.rito;
                 else /* if (p.x() <    x.key) */    x = x.lebo;
             }
             else
@@ -140,9 +140,9 @@ public class KdTree
             if (rect.contains(x.val))   rQ.add(x.val);
             if      (x.vertical)
             {
-                if      (rect.xmax() <  x.key)   range(x.lebo, rect, rQ);
-                else if (rect.xmin() >= x.key)   range(x.rito, rect, rQ);
-                else if (rect.xmin() <  x.key && rect.xmax() > x.key)
+                if      (rect.xmax() < x.key)   range(x.lebo, rect, rQ);
+                else if (rect.xmin() > x.key)   range(x.rito, rect, rQ);
+                else if (rect.xmin() <=  x.key && rect.xmax() >= x.key)
                 {
                     range(x.lebo, rect, rQ);
                     range(x.rito, rect, rQ);
@@ -150,9 +150,9 @@ public class KdTree
             }
             else    // !x.vertical
             {
-                if      (rect.ymax() <  x.key)   range(x.lebo, rect, rQ);
-                else if (rect.ymin() >= x.key)   range(x.rito, rect, rQ);
-                else if (rect.ymin() <  x.key && rect.ymax() > x.key)
+                if      (rect.ymax() < x.key)   range(x.lebo, rect, rQ);
+                else if (rect.ymin() > x.key)   range(x.rito, rect, rQ);
+                else if (rect.ymin() <=  x.key && rect.ymax() >= x.key)
                 {
                     range(x.lebo, rect, rQ);
                     range(x.rito, rect, rQ);
@@ -182,22 +182,22 @@ public class KdTree
                     &&  contender.lebo.val.distanceSquaredTo(p) 
                     <=   contender.rito.val.distanceSquaredTo(p))
             {
-                if (contender.lebo.val.distanceSquaredTo(p)
-                        <= champ.distanceSquaredTo(p))
+                // if (contender.lebo.val.distanceSquaredTo(p)
+                //         <= champ.distanceSquaredTo(p))
                     champ = nearest(contender.lebo, champ, p);
-                 if (contender.rito.val.distanceSquaredTo(p)
-                         <= champ.distanceSquaredTo(p))
+                // if (contender.rito.val.distanceSquaredTo(p)
+                //          <= champ.distanceSquaredTo(p))
                     champ = nearest(contender.rito, champ, p);
             }
             else
             {
-                if (contender.rito != null 
-                        && (contender.rito.val.distanceSquaredTo(p)
-                            <= champ.distanceSquaredTo(p)))
+                // if (contender.rito != null 
+                //         && (contender.rito.val.distanceSquaredTo(p)
+                //             <= champ.distanceSquaredTo(p)))
                     champ = nearest(contender.rito, champ, p);
-                if (contender.lebo != null 
-                        && (contender.lebo.val.distanceSquaredTo(p)
-                            <= champ.distanceSquaredTo(p)))
+                // if (contender.lebo != null 
+                //         && (contender.lebo.val.distanceSquaredTo(p)
+                //             <= champ.distanceSquaredTo(p)))
                     champ = nearest(contender.lebo, champ, p);
             }
         }
@@ -207,32 +207,42 @@ public class KdTree
     public static void main(String[] args)
     {
         KdTree kt   = new KdTree();
-        RectHV rect = new RectHV(0.25, 0.125, 0.5625, 1.0); 
+        RectHV rect = new RectHV(0.5, 0.25, 0.75, 1.0); 
         // for (Node n : kt.pQ)
         //     System.out.println(n);
-        Point2D A = new Point2D(0.7,    0.2);
-        Point2D B = new Point2D(0.5,    0.4);
-        Point2D C = new Point2D(0.2,    0.3);
-        Point2D D = new Point2D(0.4,    0.7);
-        Point2D E = new Point2D(0.9,    0.6);
-        Point2D F = new Point2D(0.646,  0.899);
+        // Point2D A = new Point2D(0.7,    0.2);
+        // Point2D B = new Point2D(0.5,    0.4);
+        // Point2D C = new Point2D(0.2,    0.3);
+        // Point2D D = new Point2D(0.4,    0.7);
+        // Point2D E = new Point2D(0.9,    0.6);
+        // Point2D F = new Point2D(0.571,  0.926);
         // Point2D G = new Point2D(0.5,    0.625);
         // Point2D H = new Point2D(1.0,    0.25);
         // Point2D I = new Point2D(0.875,  0.4375);
         // Point2D J = new Point2D(0.0625, 0.5625);
+        Point2D A  = new Point2D(1.0,   0.25);
+        Point2D B  = new Point2D(0.0,   0.0);
+        Point2D C  = new Point2D(0.25,  1.0);
+        Point2D D  = new Point2D(0.25,  0.0);
+        Point2D E  = new Point2D(0.75,  0.0);
+        Point2D F  = new Point2D(0.75,  0.75);
+        Point2D G  = new Point2D(0.0,   0.5);
+        Point2D H  = new Point2D(1.0,   0.75);
+        Point2D I  = new Point2D(0.0,   0.25);
+        Point2D J  = new Point2D(0.5,   0.0);
         kt.insert(A);
         kt.insert(B);
         kt.insert(C);
         kt.insert(D);
-        // kt.insert(E);
-        // kt.insert(F);
-        // kt.insert(G);
-        // kt.insert(H);
-        // kt.insert(I);
-        // kt.insert(J);
+        kt.insert(E);
+        kt.insert(F);
+        kt.insert(G);
+        kt.insert(H);
+        kt.insert(I);
+        kt.insert(J);
         // System.out.println(rect);
-        // System.out.println(kt.range(rect));
-        System.out.println(kt.nearest(F));
+        System.out.println(kt.range(rect));
+        // System.out.println(kt.nearest(F));
         // System.out.println(kt.size());
     }
 }
