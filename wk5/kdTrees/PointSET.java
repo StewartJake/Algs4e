@@ -25,18 +25,23 @@ public class PointSET
 
 
     public void insert(Point2D p)
-    {   ps.add(p);  }
+    {   
+        if (p == null)
+            throw new IllegalArgumentException("Null point");
+        ps.add(p);
+    }
 
 
     public boolean contains(Point2D p)
-    {   return ps.contains(p);  }
+    {
+        if (p == null)
+            throw new IllegalArgumentException("Null point");
+        return ps.contains(p);
+    }
 
 
     public void draw()
     {
-        //StdDraw.enableDoubleBuffering();
-        StdDraw.setXscale(0, 5);
-        StdDraw.setYscale(0, 5);
         for (Point2D p : ps)
             p.draw();
         StdDraw.show();
@@ -45,6 +50,8 @@ public class PointSET
 
     public Iterable<Point2D> range(RectHV rect)
     {
+        if (rect == null)
+            throw new IllegalArgumentException("Null rectangle");
         Queue<Point2D> rangeQ = new LinkedList<Point2D>();
         for (Point2D p : ps)
             if (rect.contains(p))
@@ -55,8 +62,10 @@ public class PointSET
 
     public Point2D nearest(Point2D p)
     {
+        if (p == null)
+            throw new IllegalArgumentException("Null point");
         double  champDist   = Double.POSITIVE_INFINITY;
-        Point2D champ       = new Point2D(0.0, 0.0);
+        Point2D champ = null;
         for (Point2D q : ps)
             if (p.distanceSquaredTo(q) < champDist)
             {
@@ -79,6 +88,6 @@ public class PointSET
         RectHV rect = new RectHV(0.0, 0.0, 4.3, 4.9);
         System.out.println(ps.range(rect));
         System.out.println(ps.nearest(new Point2D(0.0, 0.0)));
+        ps.draw();
     }
 }
-

@@ -5,9 +5,9 @@ import edu.princeton.cs.algs4.RectHV;
 
 public class KdTree
 {
-    int     size;
-    Node    root;
-    Queue<Node> pQ = new LinkedList<Node>();      //debugging
+    private int     size;
+    private Node    root;
+    // private Queue<Node> pQ = new LinkedList<Node>();      //debugging
 
     public KdTree()
     {
@@ -16,12 +16,12 @@ public class KdTree
 
     private class Node
     {
-        private boolean vertical;
-        private double  key;
-        private Point2D val;
-        private Node    lebo;   // left-bottom
-        private Node    rito;   // right-top
-        private Node    prev;
+        private final boolean   vertical;
+        private double          key;
+        private Point2D         val;
+        private Node            lebo;   // left-bottom
+        private Node            rito;   // right-top
+        private Node            prev;
 
         Node(Point2D p, Node prev)
         {
@@ -54,6 +54,8 @@ public class KdTree
 
     public void insert(Point2D p)
     {
+        if (p == null)
+            throw new IllegalArgumentException("Null point");
         root = put(root, p, root);
     }
 
@@ -63,20 +65,20 @@ public class KdTree
         if (x == null)
         {
             size++;
-            Node n = new Node(p, prev);
-            pQ.add(n);
-            return n; //new Node(p, prev);
+            // Node n = new Node(p, prev);
+            // pQ.add(n);
+            return new Node(p, prev);
         }
-        if (p.equals(x.val))    x.val = p;
+        if (p.equals(x.val))    return x;
         if (x.vertical)
         {
-            if (p.x() > x.key)  x.rito = put(x.rito, p, x);
-            if (p.x() < x.key)  x.lebo = put(x.lebo, p, x);
+            if (p.x() >=    x.key)  x.rito = put(x.rito, p, x);
+            if (p.x() <     x.key)  x.lebo = put(x.lebo, p, x);
         }
-        if (!x.vertical)
+        else if (!x.vertical)
         {
-            if (p.y() > x.key)  x.rito = put(x.rito, p, x);
-            if (p.y() < x.key)  x.lebo = put(x.lebo, p, x);
+            if (p.y() >=    x.key)  x.rito = put(x.rito, p, x);
+            if (p.y() <     x.key)  x.lebo = put(x.lebo, p, x);
         }
         return x;
     }
@@ -85,19 +87,21 @@ public class KdTree
 
     public boolean contains(Point2D p)
     {
+        if (p == null)
+            throw new IllegalArgumentException("Null point");
         Node x = root;
-        while(x != null)
+        while (x != null)
         {
             if (p.equals(x.val)) return true;
             if (x.vertical)
             {
-                if      (p.x() > x.val.x())  x = x.rito;
-                else if (p.x() < x.val.x())  x = x.lebo;
+                if      (p.x() >=   x.key)  x = x.rito;
+                else if (p.x() <    x.key)  x = x.lebo;
             }
             else
             {
-                if      (p.y() > x.val.y())  x = x.rito;
-                else if (p.y() < x.val.y())  x = x.lebo;
+                if      (p.y() >=   x.key)  x = x.rito;
+                else if (p.y() <    x.key)  x = x.lebo;
             }
         }
         return false;
@@ -106,13 +110,16 @@ public class KdTree
 
     public void draw()
     {
+        // blank for now
     }
 
 
     public Iterable<Point2D> range(RectHV rect)
     {
+        if (rect == null)
+            throw new IllegalArgumentException("Rectangle undefined");
         Queue<Point2D> rQ = new LinkedList<Point2D>();
-        contains(root, rect, rQ);
+        range(root, rect, rQ);
         // Node x = root;
         // while (x != null)
         // {
@@ -135,29 +142,29 @@ public class KdTree
         return rQ;
     }
 
-    private void contains(Node x, RectHV rect, Queue<Point2D> rQ)
+    private void range(Node x, RectHV rect, Queue<Point2D> rQ)
     {
         if (x != null)
         {
             if (rect.contains(x.val))   rQ.add(x.val);
             if      (x.vertical)
             {
-                if      (rect.xmax() < x.val.x())   contains(x.lebo, rect, rQ);
-                else if (rect.xmax() > x.val.x())   contains(x.rito, rect, rQ);
-                else if (rect.xmin() <=  x.val.x() && rect.xmax() >= x.val.x())
+                if      (rect.xmax() <  x.key)   range(x.lebo, rect, rQ);
+                else if (rect.xmax() >= x.key)   range(x.rito, rect, rQ);
+                else if (rect.xmin() <  x.key && rect.xmax() > x.key)
                 {
-                    contains(x.lebo, rect, rQ);
-                    contains(x.rito, rect, rQ);
+                    range(x.lebo, rect, rQ);
+                    range(x.rito, rect, rQ);
                 }
             }
-            else if (!x.vertical)
+            else    // !x.vertical
             {
-                if      (rect.ymax() < x.val.y())   contains(x.lebo, rect, rQ);
-                else if (rect.ymax() > x.val.y())   contains(x.rito, rect, rQ);
-                else if (rect.ymin() < x.val.y() && rect.ymax() > x.val.y())
+                if      (rect.ymax() <  x.key)   range(x.lebo, rect, rQ);
+                else if (rect.ymax() >= x.key)   range(x.rito, rect, rQ);
+                else if (rect.ymin() <  x.key && rect.ymax() > x.key)
                 {
-                    contains(x.lebo, rect, rQ);
-                    contains(x.rito, rect, rQ);
+                    range(x.lebo, rect, rQ);
+                    range(x.rito, rect, rQ);
                 }
             }
         }
@@ -167,7 +174,9 @@ public class KdTree
 
     public Point2D nearest(Point2D p)
     {
-        Point2D champ = root.val;
+        if (p == null)
+            throw new IllegalArgumentException("Null point");
+        Point2D champ = (root == null) ? null : root.val;
         return nearest(root, champ, p);
     }
 
@@ -206,25 +215,33 @@ public class KdTree
 
     public static void main(String[] args)
     {
-        Point2D p0  = new Point2D(0.0, 0.0);
-        Point2D p1  = new Point2D(1.0, 1.0);
-        Point2D p2  = new Point2D(2.0, 2.0);
-        Point2D p3  = new Point2D(3.0, 3.0);
-        Point2D p4  = new Point2D(4.0, 4.0);
-        Point2D p5  = new Point2D(5.0, 5.0);
         KdTree kt   = new KdTree();
-        RectHV rect = new RectHV(-1.0, -1.0, 1.0, 1.0); 
-        kt.insert(p5);
-        kt.insert(p2);
-        kt.insert(p4);
-        kt.insert(p3);
-        //kt.insert(p0);
-        kt.insert(p1);
-        for (Node n : kt.pQ)
-            System.out.println(n);
-        System.out.println(kt.contains(p3));
-        System.out.println(kt.contains(p2));
+        RectHV rect = new RectHV(0.25, 0.125, 0.5625, 1.0); 
+        // for (Node n : kt.pQ)
+        //     System.out.println(n);
+        // System.out.println(kt.range(rect));
+        // System.out.println(kt.nearest(p0));
+        Point2D A = new Point2D(0.3125, 0.75);
+        Point2D B = new Point2D(0.1875, 0.8125);
+        Point2D C = new Point2D(0.125,  0.5);
+        Point2D D = new Point2D(0.9375, 0.1875);
+        Point2D E = new Point2D(0.6875, 0.0625);
+        Point2D F = new Point2D(0.375,  0.0);
+        Point2D G = new Point2D(0.5,    0.625);
+        Point2D H = new Point2D(1.0,    0.25);
+        Point2D I = new Point2D(0.875,  0.4375);
+        Point2D J = new Point2D(0.0625, 0.5625);
+        kt.insert(A);
+        kt.insert(B);
+        kt.insert(C);
+        kt.insert(D);
+        kt.insert(E);
+        kt.insert(F);
+        kt.insert(G);
+        kt.insert(H);
+        kt.insert(I);
+        kt.insert(J);
+        System.out.println(rect);
         System.out.println(kt.range(rect));
-        System.out.println(kt.nearest(p0));
     }
 }
