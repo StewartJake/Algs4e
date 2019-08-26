@@ -7,6 +7,7 @@ public class KdTree
 {
     private int     size;
     private Node    root;
+    private Node    peek;
     // private Queue<Node> pQ = new LinkedList<Node>();      //debugging
 
     public KdTree()
@@ -26,12 +27,13 @@ public class KdTree
 
         Node(Point2D p, Node prev)
         {
-            if (prev == null || prev.vertical)
-                this.key = p.x();
+            if (prev == null || !prev.vertical)
+                this.key    = p.x();
             else
-                this.key = p.y();
-            this.vertical = (prev == null) ? true : !prev.vertical;
-            this.val = p;
+                this.key    = p.y();
+            this.vertical   = (prev == null) ? true : !prev.vertical;
+            this.val        = p;
+            this.prev       = prev;
         }
 
         public String toString()
@@ -44,6 +46,10 @@ public class KdTree
             return s.toString();
         }
     }
+
+    private Node peek()
+    {   return peek;    }
+
 
     public boolean isEmpty()
     {   return size(root) == 0;   }
@@ -61,23 +67,27 @@ public class KdTree
     {
         if (p == null)
             throw new IllegalArgumentException("Null point");
-        root = put(root, p, root);
+        root = put(root, p, null);
     }
 
 
     private Node put(Node x, Point2D p, Node prev)
     {
-        if (x == null)  x = new Node(p, prev);
-        // if (p.equals(x.val))    return x;
+        if (x == null)
+        {
+            x = new Node(p, prev);
+            peek = x;
+        }
+        else if (p.equals(x.val))    x = x;
         else if (x.vertical)
         {
-            if (p.x() >=    x.key)  x.rito = put(x.rito, p, x);
-            if (p.x() <     x.key)  x.lebo = put(x.lebo, p, x);
+            if      (p.x() >=    x.key)         x.rito = put(x.rito, p, x);
+            else /* if (p.x() <     x.key) */   x.lebo = put(x.lebo, p, x);
         }
         else if (!x.vertical)
         {
-            if (p.y() >=    x.key)  x.rito = put(x.rito, p, x);
-            if (p.y() <     x.key)  x.lebo = put(x.lebo, p, x);
+            if      (p.y() >=    x.key)         x.rito = put(x.rito, p, x);
+            else /* if (p.y() <     x.key) */   x.lebo = put(x.lebo, p, x);
         }
         x.count = 1 + size(x.lebo) + size(x.rito);
         return x;
@@ -95,13 +105,13 @@ public class KdTree
             if (p.equals(x.val)) return true;
             if (x.vertical)
             {
-                if      (p.x() >=   x.key)  x = x.rito;
-                else if (p.x() <    x.key)  x = x.lebo;
+                if      (p.x() >=   x.key)x =       x.rito;
+                else /* if (p.x() <    x.key) */    x = x.lebo;
             }
             else
             {
-                if      (p.y() >=   x.key)  x = x.rito;
-                else if (p.y() <    x.key)  x = x.lebo;
+                if      (p.y() >=   x.key)          x = x.rito;
+                else /* if (p.y() <    x.key) */    x = x.lebo;
             }
         }
         return false;
@@ -120,25 +130,6 @@ public class KdTree
             throw new IllegalArgumentException("Rectangle undefined");
         Queue<Point2D> rQ = new LinkedList<Point2D>();
         range(root, rect, rQ);
-        // Node x = root;
-        // while (x != null)
-        // {
-        //     if (rect.contains(x.val))   rQ.add(x.val);
-        //     if      (x.vertical)
-        //     {
-        //         if      (rect.xmax() < x.val.x())   x = x.lebo;
-        //         else if (rect.xmax() > x.val.x())   x = x.rito;
-        //         // else if (rect.xmin() < x.val.x() && rect.xmax() > x.val.x())
-        //         // {}
-        //     }
-        //     else if (!x.vertical)
-        //     {
-        //         if      (rect.ymax() < x.val.y())   x = x.lebo;
-        //         else if (rect.ymax() > x.val.y())   x = x.rito;
-        //         // else if (rect.ymin() < x.val.y() && rect.ymax() > x.val.y())
-        //         // {}
-        //     }
-        // }
         return rQ;
     }
 
@@ -191,22 +182,22 @@ public class KdTree
                     &&  contender.lebo.val.distanceSquaredTo(p) 
                     <=   contender.rito.val.distanceSquaredTo(p))
             {
-                //if (contender.lebo.val.distanceSquaredTo(p)
-                //        <= champ.distanceSquaredTo(p))
+                if (contender.lebo.val.distanceSquaredTo(p)
+                        <= champ.distanceSquaredTo(p))
                     champ = nearest(contender.lebo, champ, p);
-                // if (contender.rito.val.distanceSquaredTo(p)
-                //         <= champ.distanceSquaredTo(p))
+                 if (contender.rito.val.distanceSquaredTo(p)
+                         <= champ.distanceSquaredTo(p))
                     champ = nearest(contender.rito, champ, p);
             }
             else
             {
-                // if (contender.rito != null 
-                //         && (contender.rito.val.distanceSquaredTo(p)
-                //             <= champ.distanceSquaredTo(p)))
+                if (contender.rito != null 
+                        && (contender.rito.val.distanceSquaredTo(p)
+                            <= champ.distanceSquaredTo(p)))
                     champ = nearest(contender.rito, champ, p);
-                // if (contender.lebo != null 
-                //         && (contender.lebo.val.distanceSquaredTo(p)
-                //             <= champ.distanceSquaredTo(p)))
+                if (contender.lebo != null 
+                        && (contender.lebo.val.distanceSquaredTo(p)
+                            <= champ.distanceSquaredTo(p)))
                     champ = nearest(contender.lebo, champ, p);
             }
         }
@@ -233,7 +224,7 @@ public class KdTree
         kt.insert(B);
         kt.insert(C);
         kt.insert(D);
-        kt.insert(E);
+        // kt.insert(E);
         // kt.insert(F);
         // kt.insert(G);
         // kt.insert(H);
@@ -242,6 +233,6 @@ public class KdTree
         // System.out.println(rect);
         // System.out.println(kt.range(rect));
         System.out.println(kt.nearest(F));
-        System.out.println(kt.size());
+        // System.out.println(kt.size());
     }
 }
