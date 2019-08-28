@@ -8,7 +8,7 @@ public class KdTree
     private int     size;
     private Node    root;
     private Node    peek;
-    // private Queue<Node> pQ = new LinkedList<Node>();      //debugging
+    // private Queue<Node> pQ = new LinkedList<Node>();      // debugging
 
     public KdTree()
     {
@@ -206,8 +206,8 @@ public class KdTree
 
     public static void main(String[] args)
     {
-        KdTree kt   = new KdTree();
-        RectHV rect = new RectHV(0.5, 0.25, 0.75, 1.0); 
+        // KdTree kt   = new KdTree();
+        // RectHV rect = new RectHV(0.5, 0.25, 0.75, 1.0); 
         // for (Node n : kt.pQ)
         //     System.out.println(n);
         // Point2D A = new Point2D(0.7,    0.2);
@@ -220,28 +220,28 @@ public class KdTree
         // Point2D H = new Point2D(1.0,    0.25);
         // Point2D I = new Point2D(0.875,  0.4375);
         // Point2D J = new Point2D(0.0625, 0.5625);
-        Point2D A  = new Point2D(1.0,   0.25);
-        Point2D B  = new Point2D(0.0,   0.0);
-        Point2D C  = new Point2D(0.25,  1.0);
-        Point2D D  = new Point2D(0.25,  0.0);
-        Point2D E  = new Point2D(0.75,  0.0);
-        Point2D F  = new Point2D(0.75,  0.75);
-        Point2D G  = new Point2D(0.0,   0.5);
-        Point2D H  = new Point2D(1.0,   0.75);
-        Point2D I  = new Point2D(0.0,   0.25);
-        Point2D J  = new Point2D(0.5,   0.0);
-        kt.insert(A);
-        kt.insert(B);
-        kt.insert(C);
-        kt.insert(D);
-        kt.insert(E);
-        kt.insert(F);
-        kt.insert(G);
-        kt.insert(H);
-        kt.insert(I);
-        kt.insert(J);
+        // Point2D A  = new Point2D(1.0,   0.25);
+        // Point2D B  = new Point2D(0.0,   0.0);
+        // Point2D C  = new Point2D(0.25,  1.0);
+        // Point2D D  = new Point2D(0.25,  0.0);
+        // Point2D E  = new Point2D(0.75,  0.0);
+        // Point2D F  = new Point2D(0.75,  0.75);
+        // Point2D G  = new Point2D(0.0,   0.5);
+        // Point2D H  = new Point2D(1.0,   0.75);
+        // Point2D I  = new Point2D(0.0,   0.25);
+        // Point2D J  = new Point2D(0.5,   0.0);
+        // kt.insert(A);
+        // kt.insert(B);
+        // kt.insert(C);
+        // kt.insert(D);
+        // kt.insert(E);
+        // kt.insert(F);
+        // kt.insert(G);
+        // kt.insert(H);
+        // kt.insert(I);
+        // kt.insert(J);
         // System.out.println(rect);
-        System.out.println(kt.range(rect));
+        // System.out.println(kt.range(rect));
         // System.out.println(kt.nearest(F));
         // System.out.println(kt.size());
     }
